@@ -2,6 +2,7 @@ import { Telegraf, Scenes } from 'telegraf';
 import { config } from 'dotenv';
 import { sessionMiddleware } from './middlewares/session';
 import startScene from './scenes/startScene.ts';
+import choiceProductScene from './scenes/choiceProductScene.ts';
 
 config();
 
@@ -12,7 +13,7 @@ if (!token) {
 
 const bot = new Telegraf<Scenes.SceneContext>(token);
 
-const stage = new Scenes.Stage([startScene]);
+const stage = new Scenes.Stage([startScene, choiceProductScene]);
 
 bot.use(sessionMiddleware);
 bot.use(stage.middleware());

@@ -4,16 +4,31 @@ import { scenesConfig, type SceneName} from './../config/scenesConfig.ts';
 export const getMenuKeyboard = (sceneName: SceneName) => {
 
   const scene = scenesConfig[sceneName];
+  const rows: ReturnType<typeof Markup.button.callback | typeof Markup.button.url>[][] = [];
+  let currentRow: typeof rows[number] = [];
 
-  const buttons = scene.keyboard.map((item) => {
+  for (const item of scene.keyboard) {
+    if (item.type === 'separator') {
+      if (currentRow.length) {
+        rows.push(currentRow);
+        currentRow = [];
+      }
+      continue;
+    }
+
+    console.log(rows)
+
     if (item.type === 'callback') {
-      return [Markup.button.callback(item.label, item.key)];
+      console.log(8484, typeof item.key)
+      currentRow.push(Markup.button.callback(item.label, JSON.stringify(item.key)));
+    } else if (item.type === 'url') {
+      currentRow.push(Markup.button.url(item.label, item.url));
     }
-    if (item.type === 'url') {
-      return [Markup.button.url(item.label, item.url)];
-    }
-    return []
-  });
+  }
 
-  return Markup.inlineKeyboard(buttons);
+  if (currentRow.length) {
+    rows.push(currentRow);
+  }
+
+  return Markup.inlineKeyboard(rows);
 };
