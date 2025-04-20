@@ -3,20 +3,32 @@
   "module": "src/bot.ts",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "scripts": {
-    "dev": "bun --watch run src/bot.ts"
+    "dev": "bun --watch run src/bot.ts",
+    "docker": "docker compose up",
+    "migrate": "bunx prisma migrate dev",
+    "generate": "bunx prisma generate",
+    "studio": "bunx prisma studio"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
-    "dotenv": "^16.5.0",
     "prisma": "^6.6.0",
-    "telegraf": "^4.16.3",
-    "ts-node": "^10.9.2"
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "ts-node": "^10.9.2",
+    "@eslint/js": "^9.20.0",
+    "eslint": "^9.20.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.14.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.24.0"
   }
 }

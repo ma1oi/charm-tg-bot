@@ -1,25 +1,37 @@
-import { Telegraf, Scenes } from 'telegraf';
-import { config } from 'dotenv';
-import { sessionMiddleware } from './middlewares/session';
-import startScene from './scenes/startScene.ts';
-import choiceProductScene from './scenes/choiceProductScene.ts';
+import { appConfig } from '@config/app';
+import { prisma } from '@config/database';
+import { User } from '@prisma/client';
+import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
+import { Scenes, Telegraf } from 'telegraf';
 
-config();
+import { sessionMiddleware } from '@/middlewares/session';
+import { startScene, startSceneId } from '@/scenes/startScene';
 
-const token = process.env.BOT_TOKEN;
-if (!token) {
-  throw new Error('BOT_TOKEN не найден в .env');
-}
-
-const bot = new Telegraf<Scenes.SceneContext>(token);
+const bot = new Telegraf<Scenes.SceneContext>(appConfig.botToken);
 
 const stage = new Scenes.Stage([startScene, choiceProductScene]);
 
 bot.use(sessionMiddleware);
 bot.use(stage.middleware());
 
-bot.command('start', (ctx) => ctx.scene.enter('start'));
+bot.command('start', (ctx) => ctx.scene.enter(startSceneId));
 
-bot.launch({dropPendingUpdates: true}).then(() => {
-  console.log('Бот запущен')
-});
+void (async () => {
+	// const user = await prisma.user.create({
+	// 	data: {
+	// 		isPremium: false,
+	// 		name: 'asdsNikiaa',
+	// 		tuid: 123213n,
+	// 		username: 'asdsNikiaa',
+	// 		languageCode: 'ru',
+	// 	},
+	// });
+	// const users: User[] = await prisma.user.findMany();
+	// console.log(users);
+})();
+
+void (async () => {
+	await bot.launch({ dropPendingUpdates: true }, () => {
+		console.log('🎉 Бот запущен!');
+	});
+})();
