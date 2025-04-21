@@ -9,8 +9,8 @@ const productKeyboard = () => {
 	for (const product of products) {
 		const row = product.map((item) => ({
 			type: BUTTON_TYPES.CALLBACK,
-			key: item.name, // todo
-			label: item.name,
+			key: item.name + '_' + item.id,
+			label: item.name + ' - ' + item.cost + '₽',
 		}));
 
 		productKeyboardArray = [...productKeyboardArray, { type: BUTTON_TYPES.SEPARATOR }, ...row];

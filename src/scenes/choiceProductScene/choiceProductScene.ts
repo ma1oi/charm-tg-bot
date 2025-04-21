@@ -4,6 +4,7 @@ import { choiceProductSceneConfig as config } from './choiceProductSceneConfig';
 
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
+import { orderProductSceneId } from '@scenes/orderProductScene/orderProductScene';
 
 const sceneName = 'choiceProduct';
 
@@ -19,13 +20,17 @@ choiceProductScene.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-		const parsedKey = JSON.parse(key);
+		console.log(key);
+		const parsed = JSON.parse(key);
 
-		if (parsedKey === backButton.key) {
-			// todo
+		if (parsed === backButton.key) {
 			await ctx.scene.enter('start', { from: backButton.key });
 		} else {
-			console.log(JSON.parse(key));
+			console.log(777777, key);
+
+			await ctx.scene.enter(orderProductSceneId, { from: key });
+
+
 		}
 	}
 
