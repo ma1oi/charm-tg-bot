@@ -6,6 +6,7 @@ import { orderProductSceneConfig as config } from './orderProductSceneConfig';
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
 import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
+import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
 
 export const orderProductSceneId = config.sceneId;
 
@@ -46,6 +47,9 @@ orderProductScene.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(choiceProductSceneId);
 		} else {
 			console.log(11111, parsed);
+
+
+			await ctx.scene.enter(descriptionSkinOrderSceneId);
 
 		}
 	}

@@ -6,3 +6,8 @@ export const backButton = {
 export const productButton = {
 	key: 'product',
 };
+
+export const promocodeButton = {
+	key: 'notPromocode',
+	label: 'нет промокода',
+};
