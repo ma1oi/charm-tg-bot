@@ -7,10 +7,12 @@ import { Scenes, Telegraf } from 'telegraf';
 
 import { sessionMiddleware } from '@/middlewares/session';
 import { startScene, startSceneId } from '@/scenes/startScene';
+import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
+import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 
 const bot = new Telegraf<Scenes.SceneContext>(appConfig.botToken);
 
-const stage = new Scenes.Stage([startScene, choiceProductScene, orderProductScene]);
+const stage = new Scenes.Stage([startScene, choiceProductScene, orderProductScene, descriptionSkinOrderScene, enterPromocodeSkinOrderScene]);
 
 bot.use(sessionMiddleware);
 bot.use(stage.middleware());
