@@ -1,5 +1,4 @@
 import { appConfig } from '@config/app';
-import { prisma } from '@config/database';
 import { User } from '@prisma/client';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
 import { orderProductScene } from '@scenes/orderProductScene';
@@ -17,7 +16,9 @@ const stage = new Scenes.Stage([startScene, choiceProductScene, orderProductScen
 bot.use(sessionMiddleware);
 bot.use(stage.middleware());
 
-bot.command('start', (ctx) => ctx.scene.enter(startSceneId));
+bot.command('start', async (ctx) => {
+	await ctx.scene.enter(startSceneId);
+});
 
 void (async () => {
 	// const user = await prisma.user.create({
