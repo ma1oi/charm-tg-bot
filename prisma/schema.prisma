@@ -22,14 +22,17 @@ model User {
 }
 
 model Order {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   customerId  Int
+  customerTuid  BigInt
   artistId    Int?
-  status      OrderStatus
+  status      OrderStatus @default(not_paid)
   skinFileUrl String?
-  content     String?
-  createdAt   DateTime  @default(now())
+  description String?
+  createdAt   DateTime    @default(now())
   completedAt DateTime?
+  promocode   String?
+  nameProduct String?
 
   customer    User      @relation("CustomerOrders", fields: [customerId], references: [id])
   artist      User?     @relation("ArtistOrders", fields: [artistId], references: [id])
@@ -95,6 +98,7 @@ enum Role {
 }
 
 enum OrderStatus {
+  not_paid
   pending
   in_progress
   done

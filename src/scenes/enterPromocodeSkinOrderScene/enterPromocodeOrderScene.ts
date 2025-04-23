@@ -1,6 +1,9 @@
 import { MyContext } from '@myContext/myContext';
 import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
 import { orderProductSceneId } from '@scenes/orderProductScene';
+import { paymentSkinOrderSceneId } from '@scenes/paymentSkinOrderScene';
+import { orderService } from '@services/orders';
+import { userService } from '@services/user';
 import { Scenes } from 'telegraf';
 
 import { enterPromocodeSkinOrderSceneConfig as config } from './enterPromocodeSkinOrderSceneConfig';
@@ -24,6 +27,22 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 		promocode: ctx.message.text,
 	};
 
+
+	const orderData = ctx.session.orderData
+
+	// todo промокод есть или нет
+
+	console.log('id', ctx.from.id);
+
+	const user = await userService.getUserByTuid(BigInt(ctx.from.id));
+
+	await orderService.createOrder({
+		description: orderData.descriptionProduct,
+		customerId: user.id,
+		customerTuid: BigInt(ctx.from.id),
+		nameProduct: orderData.product || '',
+	})
+
 })
 
 enterPromocodeSkinOrderScene.on('callback_query', async (ctx) => {
@@ -36,7 +55,7 @@ enterPromocodeSkinOrderScene.on('callback_query', async (ctx) => {
 
 		if (parsed === promocodeButton.key) {
 			console.log(11111);
-			await ctx.scene.enter(orderProductSceneId);
+			await ctx.scene.enter(paymentSkinOrderSceneId);
 		} else if (parsed === backButton.key) {
 			await ctx.scene.enter(descriptionSkinOrderSceneId);
 		}
