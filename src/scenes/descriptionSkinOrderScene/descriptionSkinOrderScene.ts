@@ -1,25 +1,31 @@
+import { MyContext } from '@myContext/myContext';
+import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { orderProductSceneId } from '@scenes/orderProductScene';
 import { Scenes } from 'telegraf';
 
 import { descriptionSkinOrderSceneConfig as config } from './descriptionSkinOrderSceneConfig';
 
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
-import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
-import { orderProductSceneId } from '@scenes/orderProductScene';
-import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 
 export const descriptionSkinOrderSceneId = config.sceneId;
 
-export const descriptionSkinOrderScene = new Scenes.BaseScene<Scenes.SceneContext>(descriptionSkinOrderSceneId);
+export const descriptionSkinOrderScene = new Scenes.BaseScene<MyContext>(descriptionSkinOrderSceneId);
 
 descriptionSkinOrderScene.enter(async (ctx) => {
 	await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
-
 });
 
 descriptionSkinOrderScene.on('text', async (ctx) => {
 	console.log(111222, ctx.text);
+
+	ctx.session.orderData = {
+		...ctx.session.orderData,
+		descriptionProduct: ctx.message.text,
+	};
+
 	await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
+
 })
 
 descriptionSkinOrderScene.on('callback_query', async (ctx) => {

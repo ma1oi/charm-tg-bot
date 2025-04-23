@@ -1,20 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
+model User {
+  id       Int     @id @default(autoincrement())
+  tuid     BigInt  @unique
+  username String
+  name     String
+  role     Role    @default(customer)
+
+  ordersAsCustomer Order[] @relation("CustomerOrders")
+  ordersAsArtist   Order[] @relation("ArtistOrders")
+  messages         Message[]
+  payments         Payment[]
+  promoUsages      PromoCodeUsage[]
 }
 
-model User {
-  id           Int     @id @default(autoincrement())
-  tuid         BigInt  @unique
-  username     String?
-  name         String?
-  isPremium    Boolean @default(false) @map("is_premium")
-  languageCode String? @map("language_code")
+model Order {
+  id          Int       @id @default(autoincrement())
+  customerId  Int
+  artistId    Int?
+  status      OrderStatus
+  skinFileUrl String?
+  content     String?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
 
-  @@map("users")
+  customer    User      @relation("CustomerOrders", fields: [customerId], references: [id])
+  artist      User?     @relation("ArtistOrders", fields: [artistId], references: [id])
+  messages    Message[]
+  payments    Payment[]
+  promoUsages PromoCodeUsage[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  senderId  Int
+  content   String?
+  fileUrl   String?
+  createdAt DateTime @default(now())
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  sender    User     @relation(fields: [senderId], references: [id])
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  orderId        Int
+  customerId     Int
+  amount         Float
+  paymentLink    String?
+  paymentStatus  PaymentStatus
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  order          Order    @relation(fields: [orderId], references: [id])
+  customer       User     @relation(fields: [customerId], references: [id])
+}
+
+model PromoCode {
+  id            Int       @id @default(autoincrement())
+  code          String    @unique
+  discountType  DiscountType
+  discountValue Float
+  expiresAt     DateTime?
+  maxUses       Int?
+  usedCount     Int       @default(0)
+
+  usages        PromoCodeUsage[]
+}
+
+model PromoCodeUsage {
+  id           Int      @id @default(autoincrement())
+  promoCodeId  Int
+  userId       Int
+  orderId      Int
+  usedAt       DateTime @default(now())
+
+  promoCode    PromoCode @relation(fields: [promoCodeId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+  order        Order     @relation(fields: [orderId], references: [id])
+}
+
+enum Role {
+  customer
+  artist
+  admin
+}
+
+enum OrderStatus {
+  pending
+  in_progress
+  done
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+}
+
+enum DiscountType {
+  percent
+  fixed
 }

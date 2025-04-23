@@ -1,39 +1,27 @@
 import { appConfig } from '@config/app';
-import { User } from '@prisma/client';
+import { upsertUserMiddleware } from '@middlewares/upsertUser';
+import { MyContext } from '@myContext/myContext';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
+import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
+import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { orderProductScene } from '@scenes/orderProductScene';
 import { Scenes, Telegraf } from 'telegraf';
 
 import { sessionMiddleware } from '@/middlewares/session';
 import { startScene, startSceneId } from '@/scenes/startScene';
-import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
-import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 
-const bot = new Telegraf<Scenes.SceneContext>(appConfig.botToken);
+const bot = new Telegraf<MyContext>(appConfig.botToken);
 
-const stage = new Scenes.Stage([startScene, choiceProductScene, orderProductScene, descriptionSkinOrderScene, enterPromocodeSkinOrderScene]);
+const stage = new Scenes.Stage<MyContext>([startScene, choiceProductScene, orderProductScene, descriptionSkinOrderScene, enterPromocodeSkinOrderScene]);
 
 bot.use(sessionMiddleware);
 bot.use(stage.middleware());
 
+bot.use(upsertUserMiddleware);
+
 bot.command('start', async (ctx) => {
 	await ctx.scene.enter(startSceneId);
 });
-
-void (async () => {
-	// const user = await prisma.user.create({
-	// 	data: {
-	// 		isPremium: false,
-	// 		name: 'asdsNikiaa',
-	// 		tuid: 123213n,
-	// 		username: 'asdsNikiaa',
-	// 		languageCode: 'ru',
-	// 	},
-	// });
-	// console.log(user);
-	// const users: User[] = await prisma.user.findMany();
-	// console.log(users);
-})();
 
 void (async () => {
 	await bot.launch({ dropPendingUpdates: true }, () => {

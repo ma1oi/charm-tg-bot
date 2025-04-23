@@ -1,16 +1,18 @@
+import { MyContext } from '@myContext/myContext';
 import { choiceProductSceneId, products } from '@scenes/choiceProductScene';
+import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
+import { startSceneId } from '@scenes/startScene';
+import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
 import { Scenes } from 'telegraf';
 
 import { orderProductSceneConfig as config } from './orderProductSceneConfig';
 
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
-import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
-import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
 
 export const orderProductSceneId = config.sceneId;
 
-export const orderProductScene = new Scenes.BaseScene<Scenes.SceneContext>(orderProductSceneId);
+export const orderProductScene = new Scenes.BaseScene<MyContext>(orderProductSceneId);
 
 orderProductScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
@@ -23,14 +25,13 @@ orderProductScene.enter(async (ctx) => {
 		return null;
 	};
 
-	const product = findProductById(Number(JSON.parse(from).split('_')[1]))
+	const productId = Number(ctx.session.orderData?.product?.split('_')[1])
 
-	console.log(product);
-
-	console.log(from, 398838);
-
+	const product = findProductById(productId);
+	
 	if (product !== null) {
-		await ctx.editMessageMedia({media: product.image, type: 'photo', caption: product.name }, {reply_markup: getMenuKeyboard(config.keyboard, from).reply_markup})
+		await ctx.editMessageMedia({media: product.image, type: 'photo', caption: product.name },
+			{reply_markup: getMenuKeyboard(config.keyboard, from).reply_markup})
 	}
 });
 
@@ -47,7 +48,6 @@ orderProductScene.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(choiceProductSceneId);
 		} else {
 			console.log(11111, parsed);
-
 
 			await ctx.scene.enter(descriptionSkinOrderSceneId);
 

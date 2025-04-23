@@ -1,14 +1,15 @@
+import { MyContext } from '@myContext/myContext';
+import { orderProductSceneId } from '@scenes/orderProductScene/orderProductScene';
 import { Scenes } from 'telegraf';
 
 import { choiceProductSceneConfig as config } from './choiceProductSceneConfig';
 
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
-import { orderProductSceneId } from '@scenes/orderProductScene/orderProductScene';
 
 const sceneName = 'choiceProduct';
 
-export const choiceProductScene = new Scenes.BaseScene<Scenes.SceneContext>(sceneName);
+export const choiceProductScene = new Scenes.BaseScene<MyContext>(sceneName);
 export const choiceProductSceneId = config.sceneId;
 
 choiceProductScene.enter(async (ctx) => {
@@ -28,8 +29,12 @@ choiceProductScene.on('callback_query', async (ctx) => {
 		} else {
 			console.log(777777, key);
 
-			await ctx.scene.enter(orderProductSceneId, { from: key });
+			ctx.session.orderData = {
+				...ctx.session.orderData,
+				product: parsed,
+			};
 
+			await ctx.scene.enter(orderProductSceneId, { from: key });
 
 		}
 	}
