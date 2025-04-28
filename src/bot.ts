@@ -4,10 +4,12 @@ import { MyContext } from '@myContext/myContext';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
 import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
+import { messageSceneArtist } from '@scenes/artist/messageScene';
 import { orderSceneArtist } from '@scenes/artist/orderScene';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
 import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { messageScene, messageSceneId } from '@scenes/messageScene/messageScene';
 import { orderProductScene } from '@scenes/orderProductScene';
 import { paymentSkinOrderScene } from '@scenes/paymentSkinOrderScene/';
 import { Scenes, Telegraf } from 'telegraf';
@@ -24,11 +26,13 @@ const stage = new Scenes.Stage<MyContext>([
 	descriptionSkinOrderScene,
 	enterPromocodeSkinOrderScene,
 	paymentSkinOrderScene,
+	messageScene,
 
 	heroSceneArtist,
 	getOrderSceneArtist,
 	getMyOrdersSceneArtist,
 	orderSceneArtist,
+	messageSceneArtist,
 ]);
 
 bot.use(sessionMiddleware);
@@ -42,6 +46,22 @@ bot.command('start', async (ctx) => {
 
 bot.command('artist', async (ctx) => {
 	await ctx.scene.enter(heroSceneArtistId);
+});
+
+bot.on('callback_query', async (ctx) => {
+	console.log(2134123);
+	if (!('data' in ctx.callbackQuery)) return;
+
+	const key = JSON.parse(ctx.callbackQuery.data); // если JSON.stringify использовал
+
+	console.log(3334, key.split('_'));
+
+	if (key.split('_')[0] === 'replyMessage') {
+		await ctx.answerCbQuery();
+		await ctx.scene.enter(messageSceneId, {
+			orderId: Number(key.split('_')[1]),
+		});
+	}
 });
 
 void (async () => {

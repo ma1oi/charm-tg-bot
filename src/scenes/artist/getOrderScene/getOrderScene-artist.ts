@@ -67,7 +67,7 @@ getOrderSceneArtist.on('callback_query', async (ctx) => {
 
 		const parsed = JSON.parse(key);
 
-		console.log(55555, parsed);
+		console.log(55553, parsed);
 	}
 
 	await ctx.answerCbQuery();

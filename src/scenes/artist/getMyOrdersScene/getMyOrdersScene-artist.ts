@@ -1,6 +1,7 @@
 import { backButton } from '@constsants/buttons';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { ordersSceneArtistId } from '@scenes/artist/orderScene';
+import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
@@ -14,10 +15,11 @@ export const getMyOrdersSceneArtistId = getMyOrdersSceneConfigArtist.sceneId;
 export const getMyOrdersSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(getMyOrdersSceneArtistId);
 
 getMyOrdersSceneArtist.enter(async (ctx) => {
-	console.log('сасал');
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
+
+	const { from } = ctx.scene.state as { from: string };
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
 
@@ -40,9 +42,15 @@ getMyOrdersSceneArtist.enter(async (ctx) => {
 
 	keyboard.push({ type: 'callback', key: backButton.key, label: backButton.label });
 
-	await ctx.editMessageText(message, {
-		reply_markup: getMenuKeyboard(keyboard).reply_markup,
-	});
+	if (from === backButton.key) {
+		await ctx.sendMessage(message, {
+			reply_markup: getMenuKeyboard(keyboard).reply_markup,
+		});
+	} else {
+		await ctx.editMessageText(message, {
+			reply_markup: getMenuKeyboard(keyboard).reply_markup,
+		});
+	}
 });
 
 getMyOrdersSceneArtist.on('callback_query', async (ctx) => {
@@ -55,7 +63,7 @@ getMyOrdersSceneArtist.on('callback_query', async (ctx) => {
 
 		const parsed = JSON.parse(key);
 
-		console.log(55555, parsed);
+		console.log(55552, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
@@ -63,6 +71,8 @@ getMyOrdersSceneArtist.on('callback_query', async (ctx) => {
 			console.log(parsed.split('_')[1], 'idc');
 
 			await ctx.scene.enter(ordersSceneArtistId, { orderId: Number(parsed.split('_')[1]) });
+		} else {
+			await ctx.scene.leave();
 		}
 	}
 

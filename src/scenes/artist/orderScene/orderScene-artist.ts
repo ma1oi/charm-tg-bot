@@ -1,5 +1,7 @@
 import { backButton } from '@constsants/buttons';
+import { Order } from '@prisma/client';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
+import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { orderService } from '@services/orders';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
@@ -8,6 +10,8 @@ import { orderSceneConfigArtist } from './orderSceneConfig-artist';
 
 export const ordersSceneArtistId = orderSceneConfigArtist.sceneId;
 export const orderSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(ordersSceneArtistId);
+
+let order_: Order;
 
 orderSceneArtist.enter(async (ctx) => {
 	if (!ctx.from) {
@@ -19,6 +23,8 @@ orderSceneArtist.enter(async (ctx) => {
 	console.log(18991919191, orderId);
 
 	const order = await orderService.getOrderById(orderId);
+
+	order_ = order;
 
 	const message = `id_${order.id}\n\nОписание: ${order.description}`;
 
@@ -35,12 +41,12 @@ orderSceneArtist.on('callback_query', async (ctx) => {
 
 		const parsed = JSON.parse(key);
 
-		console.log(55555, parsed);
+		console.log(55554, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
 		} else if (parsed === 'messageCustomer') {
-			// await ctx.scene.enter();
+			await ctx.scene.enter(messageSceneArtistId, { customerId: order_.customerTuid, orderId: order_.id });
 		}
 	}
 

@@ -1,4 +1,5 @@
 import { choiceProductSceneId } from '@scenes/choiceProductScene';
+import { messageScene, messageSceneId } from '@scenes/messageScene';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
@@ -34,11 +35,14 @@ startScene.on('callback_query', async (ctx) => {
 
 		const parsed = JSON.parse(key);
 
-		console.log(55555, parsed);
+		console.log(55556, parsed);
 
 		if (parsed === choiceProductSceneId) {
 			console.log(1123312);
 			await ctx.scene.enter(choiceProductSceneId);
+		} else {
+			console.log(9898, parsed);
+			await ctx.scene.enter(messageSceneId, { key: parsed });
 		}
 	}
 

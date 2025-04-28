@@ -11,13 +11,19 @@ type OrderInput = {
 
 export const orderService = {
 	async getOrderById(id: Order['id']) {
-		if (id === undefined) {
-			throw new Error('Order id is undefined');
+		if (typeof id !== 'number') {
+			throw new Error('Order id is undefined or invalid');
 		}
+
+		console.log('llll', id);
 
 		const order = await prisma.order.findUnique({
 			where: { id },
 		});
+
+		if (!order) {
+			throw new Error(`Order with id ${id} not found`);
+		}
 
 		return { ...order };
 	},
