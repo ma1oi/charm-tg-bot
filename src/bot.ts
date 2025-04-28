@@ -1,6 +1,9 @@
 import { appConfig } from '@config/app';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
 import { MyContext } from '@myContext/myContext';
+import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
+import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
+import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
 import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
@@ -19,7 +22,11 @@ const stage = new Scenes.Stage<MyContext>([
 	orderProductScene,
 	descriptionSkinOrderScene,
 	enterPromocodeSkinOrderScene,
-	paymentSkinOrderScene
+	paymentSkinOrderScene,
+
+	heroSceneArtist,
+	getOrderSceneArtist,
+	getMyOrdersSceneArtist,
 ]);
 
 bot.use(sessionMiddleware);
@@ -29,6 +36,10 @@ bot.use(upsertUserMiddleware);
 
 bot.command('start', async (ctx) => {
 	await ctx.scene.enter(startSceneId);
+});
+
+bot.command('artist', async (ctx) => {
+	await ctx.scene.enter(heroSceneArtistId);
 });
 
 void (async () => {

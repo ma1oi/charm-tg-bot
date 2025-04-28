@@ -1,4 +1,3 @@
-import { backButton } from '@constsants/buttons';
 import { Markup } from 'telegraf';
 
 import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
@@ -7,22 +6,16 @@ export const getMenuKeyboard = (keyboard: KeyboardButton[], key?: string) => {
 	const rows: ReturnType<typeof Markup.button.callback | typeof Markup.button.url>[][] = [];
 	let currentRow: (typeof rows)[number] = [];
 
+	console.log(keyboard, 444444);
 
 	for (const item of keyboard) {
-
 		if (item.type === BUTTON_TYPES.SEPARATOR) {
 			if (currentRow.length) {
 				rows.push(currentRow);
 				currentRow = [];
 			}
 		} else if (item.type === BUTTON_TYPES.CALLBACK) {
-			key = key ?? item.key;
-
-			if (item.key === backButton.key) {
-				currentRow.push(Markup.button.callback(item.label, JSON.stringify(item.key)));
-			} else {
-				currentRow.push(Markup.button.callback(item.label, JSON.stringify(key)));
-			}
+			currentRow.push(Markup.button.callback(item.label, JSON.stringify(item.key)));
 		} else if (item.type === BUTTON_TYPES.URL) {
 			currentRow.push(Markup.button.url(item.label, item.url));
 		}
@@ -31,6 +24,8 @@ export const getMenuKeyboard = (keyboard: KeyboardButton[], key?: string) => {
 	if (currentRow.length) {
 		rows.push(currentRow);
 	}
+
+	console.log(rows);
 
 	return Markup.inlineKeyboard(rows);
 };
