@@ -1,22 +1,27 @@
 import { backButton } from '@constsants/buttons';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
+import { ordersSceneArtistId } from '@scenes/artist/orderScene';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
-import { KeyboardButton } from '@types/keyboard';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { getMyOrdersSceneConfigArtist } from './getMyOrdersSceneConfig-artist';
 
+import { KeyboardButton } from '@/types/keyboard';
+
 export const getMyOrdersSceneArtistId = getMyOrdersSceneConfigArtist.sceneId;
 export const getMyOrdersSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(getMyOrdersSceneArtistId);
 
 getMyOrdersSceneArtist.enter(async (ctx) => {
+	console.log('сасал');
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
+
+	console.log(artist, 9949494);
 
 	const orders = await orderService.getAllActiveArtistOrders(artist.id);
 
@@ -55,7 +60,9 @@ getMyOrdersSceneArtist.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'order') {
-			console.log(parsed.split('_')[1]);
+			console.log(parsed.split('_')[1], 'idc');
+
+			await ctx.scene.enter(ordersSceneArtistId, { orderId: Number(parsed.split('_')[1]) });
 		}
 	}
 

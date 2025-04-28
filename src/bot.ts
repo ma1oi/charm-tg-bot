@@ -4,6 +4,7 @@ import { MyContext } from '@myContext/myContext';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
 import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
+import { orderSceneArtist } from '@scenes/artist/orderScene';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
 import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
@@ -27,6 +28,7 @@ const stage = new Scenes.Stage<MyContext>([
 	heroSceneArtist,
 	getOrderSceneArtist,
 	getMyOrdersSceneArtist,
+	orderSceneArtist,
 ]);
 
 bot.use(sessionMiddleware);
