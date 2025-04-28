@@ -26,7 +26,6 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
 		} else if (parsed === 'paid') {
-
 		}
 	}
 
