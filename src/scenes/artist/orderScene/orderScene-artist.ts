@@ -46,7 +46,7 @@ orderSceneArtist.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
 		} else if (parsed === 'messageCustomer') {
-			await ctx.scene.enter(messageSceneArtistId, { customerId: order_.customerTuid, orderId: order_.id });
+			await ctx.scene.enter(messageSceneArtistId, { orderId: order_.id });
 		}
 	}
 

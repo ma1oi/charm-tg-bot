@@ -1,8 +1,7 @@
 import { MyContext } from '@myContext/myContext';
 import { choiceProductSceneId, products } from '@scenes/choiceProductScene';
 import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
-import { startSceneId } from '@scenes/startScene';
-import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
+import { messageSceneId } from '@scenes/messageScene';
 import { Scenes } from 'telegraf';
 
 import { orderProductSceneConfig as config } from './orderProductSceneConfig';
@@ -25,13 +24,15 @@ orderProductScene.enter(async (ctx) => {
 		return null;
 	};
 
-	const productId = Number(ctx.session.orderData?.product?.split('_')[1])
+	const productId = Number(ctx.session.orderData?.product?.split('_')[1]);
 
 	const product = findProductById(productId);
-	
+
 	if (product !== null) {
-		await ctx.editMessageMedia({media: product.image, type: 'photo', caption: product.name },
-			{reply_markup: getMenuKeyboard(config.keyboard, from).reply_markup})
+		await ctx.editMessageMedia(
+			{ media: product.image, type: 'photo', caption: product.name },
+			{ reply_markup: getMenuKeyboard(config.keyboard, from).reply_markup }
+		);
 	}
 });
 
@@ -46,11 +47,13 @@ orderProductScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			console.log(11111);
 			await ctx.scene.enter(choiceProductSceneId);
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			console.log(9898, parsed);
+			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		} else {
 			console.log(11111, parsed);
 
 			await ctx.scene.enter(descriptionSkinOrderSceneId);
-
 		}
 	}
 

@@ -1,5 +1,6 @@
 import { MyContext } from '@myContext/myContext';
 import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { messageSceneId } from '@scenes/messageScene';
 import { orderProductSceneId } from '@scenes/orderProductScene';
 import { Scenes } from 'telegraf';
 
@@ -13,7 +14,13 @@ export const descriptionSkinOrderSceneId = config.sceneId;
 export const descriptionSkinOrderScene = new Scenes.BaseScene<MyContext>(descriptionSkinOrderSceneId);
 
 descriptionSkinOrderScene.enter(async (ctx) => {
-	await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	const { from } = ctx.scene.state as { from: string };
+
+	if (from === backButton.key) {
+		await ctx.sendMessage(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	} else {
+		await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	}
 });
 
 descriptionSkinOrderScene.on('text', async (ctx) => {
@@ -25,8 +32,7 @@ descriptionSkinOrderScene.on('text', async (ctx) => {
 	};
 
 	await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
-
-})
+});
 
 descriptionSkinOrderScene.on('callback_query', async (ctx) => {
 	const callback = ctx.callbackQuery;
@@ -39,6 +45,9 @@ descriptionSkinOrderScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			console.log(11111);
 			await ctx.scene.enter(orderProductSceneId);
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			console.log(9898, parsed);
+			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		}
 	}
 

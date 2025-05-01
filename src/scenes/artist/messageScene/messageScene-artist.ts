@@ -2,9 +2,9 @@ import { appConfig } from '@config/app';
 import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
-import { getOrderSceneArtistId } from '@scenes/artist/getOrderScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageService } from '@services/message';
+import { orderService } from '@services/orders';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes, Telegraf } from 'telegraf';
@@ -24,23 +24,35 @@ messageSceneArtist.enter(async (ctx) => {
 		throw new Error('ctx.from not implemented');
 	}
 
-	const { customerId, orderId } = ctx.scene.state as { customerId: bigint; orderId: number };
+	const { orderId, key } = ctx.scene.state as { orderId: number; key: string };
 
-	customerId_ = customerId;
+	console.log(',customerId.', 'orderId', ctx.scene.state, orderId, key);
+
 	orderId_ = orderId;
 
-	console.log('customerId', customerId);
+	orderId_ ??= Number(key.split('_')[1]);
 
-	await ctx.editMessageText('отправь сообщение', {
-		reply_markup: getMenuKeyboard(messageSceneConfigArtist.keyboard).reply_markup,
-	});
+	const order = await orderService.getOrderById(orderId_);
+
+	customerId_ = order.customerTuid;
+
+	console.log('customerId', customerId_);
+
+	if (orderId === undefined) {
+		await ctx.sendMessage('отправь сообщение заказчику', {
+			reply_markup: getMenuKeyboard(messageSceneConfigArtist.keyboard).reply_markup,
+		});
+	} else {
+		await ctx.editMessageText('отправь сообщение заказчику', {
+			reply_markup: getMenuKeyboard(messageSceneConfigArtist.keyboard).reply_markup,
+		});
+	}
 });
 
 messageSceneArtist.on('text', async (ctx) => {
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
-	console.log(111222, ctx.text);
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
 

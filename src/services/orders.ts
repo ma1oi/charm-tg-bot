@@ -15,8 +15,6 @@ export const orderService = {
 			throw new Error('Order id is undefined or invalid');
 		}
 
-		console.log('llll', id);
-
 		const order = await prisma.order.findUnique({
 			where: { id },
 		});

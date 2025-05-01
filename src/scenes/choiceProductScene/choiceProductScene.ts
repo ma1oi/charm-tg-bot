@@ -1,4 +1,5 @@
 import { MyContext } from '@myContext/myContext';
+import { messageSceneId } from '@scenes/messageScene';
 import { orderProductSceneId } from '@scenes/orderProductScene/orderProductScene';
 import { Scenes } from 'telegraf';
 
@@ -13,7 +14,13 @@ export const choiceProductScene = new Scenes.BaseScene<MyContext>(sceneName);
 export const choiceProductSceneId = config.sceneId;
 
 choiceProductScene.enter(async (ctx) => {
-	await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	const { from } = ctx.scene.state as { from: string };
+
+	if (from === backButton.key) {
+		await ctx.sendMessage(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	} else {
+		await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+	}
 });
 
 choiceProductScene.on('callback_query', async (ctx) => {
@@ -26,6 +33,9 @@ choiceProductScene.on('callback_query', async (ctx) => {
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter('start', { from: backButton.key });
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			console.log(9898, parsed);
+			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		} else {
 			console.log(777777, key);
 
@@ -35,7 +45,6 @@ choiceProductScene.on('callback_query', async (ctx) => {
 			};
 
 			await ctx.scene.enter(orderProductSceneId, { from: key });
-
 		}
 	}
 

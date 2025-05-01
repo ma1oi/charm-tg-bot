@@ -13,7 +13,6 @@ export const getOrderSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(get
 
 getOrderSceneArtist.enter(async (ctx) => {
 	const order = await orderService.getPendingOrder();
-	console.log(order);
 
 	let message = 'Произошла ошибка';
 
@@ -27,8 +26,6 @@ getOrderSceneArtist.enter(async (ctx) => {
 			status: OrderStatus.in_progress,
 			artistId: artist.id,
 		});
-
-		console.log(updateOrder);
 
 		if (updateOrder) {
 			message = `Id заказа: #id_${order.id}\nОписание: ${order.description}\nСтатус: в работе`;
@@ -62,8 +59,6 @@ getOrderSceneArtist.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
 
 		const parsed = JSON.parse(key);
 

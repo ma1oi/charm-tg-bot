@@ -2,13 +2,15 @@ import { Markup } from 'telegraf';
 
 import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 
-export const getMenuKeyboard = (keyboard: KeyboardButton[], key?: string) => {
+export const getMenuKeyboard = (keyboard: KeyboardButton[] | (() => KeyboardButton[]), key?: string) => {
+	const actualKeyboard = typeof keyboard === 'function' ? keyboard() : keyboard;
+
 	const rows: ReturnType<typeof Markup.button.callback | typeof Markup.button.url>[][] = [];
 	let currentRow: (typeof rows)[number] = [];
 
-	console.log(keyboard, 444444);
+	// console.log(keyboard, 444444);
 
-	for (const item of keyboard) {
+	for (const item of actualKeyboard) {
 		if (item.type === BUTTON_TYPES.SEPARATOR) {
 			if (currentRow.length) {
 				rows.push(currentRow);
@@ -25,7 +27,7 @@ export const getMenuKeyboard = (keyboard: KeyboardButton[], key?: string) => {
 		rows.push(currentRow);
 	}
 
-	console.log(rows);
+	// console.log(rows);
 
 	return Markup.inlineKeyboard(rows);
 };

@@ -1,6 +1,8 @@
 import { backButton } from '@constsants/buttons';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
+import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { ordersSceneArtistId } from '@scenes/artist/orderScene';
+import { messageSceneId } from '@scenes/messageScene';
 import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
@@ -23,17 +25,11 @@ getMyOrdersSceneArtist.enter(async (ctx) => {
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
 
-	console.log(artist, 9949494);
-
 	const orders = await orderService.getAllActiveArtistOrders(artist.id);
-
-	console.log(orders);
 
 	let message = '';
 
 	const keyboard: KeyboardButton[] = [];
-
-	console.log(111, orders);
 
 	Object.values(orders).forEach((order) => {
 		message = message + `Ордер id_${order.id}\n\n`;
@@ -59,20 +55,14 @@ getMyOrdersSceneArtist.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 
-		console.log(key);
-
 		const parsed = JSON.parse(key);
-
-		console.log(55552, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'order') {
-			console.log(parsed.split('_')[1], 'idc');
-
 			await ctx.scene.enter(ordersSceneArtistId, { orderId: Number(parsed.split('_')[1]) });
-		} else {
-			await ctx.scene.leave();
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			await ctx.scene.enter(messageSceneArtistId, { key: parsed });
 		}
 	}
 

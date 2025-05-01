@@ -84,8 +84,6 @@ enterPromocodeSkinOrderScene.on('callback_query', async (ctx) => {
 
 			const createdOrder = await createOrder(ctx);
 
-			console.log(createdOrder);
-
 			await ctx.scene.enter(paymentSkinOrderSceneId);
 		} else if (parsed === backButton.key) {
 			await ctx.scene.enter(descriptionSkinOrderSceneId);

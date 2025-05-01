@@ -18,15 +18,17 @@ const bot = new Telegraf<MyContext>(appConfig.botToken);
 
 let artistTuid_: bigint;
 let orderId_: number;
+let fromScene_: string;
 
 messageScene.enter(async (ctx) => {
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
 
-	const { orderId } = ctx.scene.state as { orderId: number };
+	const { orderId, fromScene } = ctx.scene.state as { orderId: number; fromScene: string };
 
 	orderId_ = orderId;
+	fromScene_ = fromScene;
 
 	console.log('orderId', orderId, typeof orderId_ === 'number');
 
@@ -58,7 +60,6 @@ messageScene.on('text', async (ctx) => {
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
-	console.log(111222, ctx.text);
 
 	const customer = await userService.getUserByTuid(BigInt(ctx.from.id));
 
@@ -71,7 +72,7 @@ messageScene.on('text', async (ctx) => {
 	console.log(createdMessage);
 
 	await bot.telegram.sendMessage(Number(artistTuid_), ctx.text, {
-		reply_markup: getMenuKeyboard([{ type: 'callback', key: 'replyMessage_1', label: 'Ответить на сообщение' }])
+		reply_markup: getMenuKeyboard([{ type: 'callback', key: 'replyMessage_4', label: 'Ответить на сообщение' }])
 			.reply_markup,
 	});
 
@@ -93,7 +94,11 @@ messageScene.on('callback_query', async (ctx) => {
 		console.log(55555, parsed);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter(startSceneId, { from: backButton.key });
+			console.log(fromScene_, 1111);
+			await ctx.scene.enter(fromScene_, { from: backButton.key });
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			// todo split по key replyMessage_id
+			await ctx.scene.reenter();
 		}
 	}
 

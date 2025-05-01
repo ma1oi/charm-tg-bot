@@ -44,11 +44,9 @@ heroSceneArtist.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 
-		console.log(key);
-
 		const parsed = JSON.parse(key);
 
-		console.log(5555599, parsed);
+		// console.log(5555599, parsed);
 
 		if (parsed === 'getNewOrder') {
 			await ctx.scene.enter(getOrderSceneArtistId);

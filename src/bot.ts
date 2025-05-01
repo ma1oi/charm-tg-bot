@@ -49,17 +49,16 @@ bot.command('artist', async (ctx) => {
 });
 
 bot.on('callback_query', async (ctx) => {
-	console.log(2134123);
 	if (!('data' in ctx.callbackQuery)) return;
 
-	const key = JSON.parse(ctx.callbackQuery.data); // если JSON.stringify использовал
-
-	console.log(3334, key.split('_'));
+	const key = JSON.parse(ctx.callbackQuery.data);
 
 	if (key.split('_')[0] === 'replyMessage') {
+		console.log(ctx.scene.current?.id, 'ctx.scene.current?.id');
 		await ctx.answerCbQuery();
 		await ctx.scene.enter(messageSceneId, {
 			orderId: Number(key.split('_')[1]),
+			fromScene: ctx.scene.current?.id,
 		});
 	}
 });
