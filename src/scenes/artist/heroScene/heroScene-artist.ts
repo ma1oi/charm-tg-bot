@@ -52,7 +52,7 @@ heroSceneArtist.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(getOrderSceneArtistId);
 		} else if (parsed === 'getMyOrders') {
 			console.log('jjjjjjjjjjj');
-			await ctx.scene.enter(getMyOrdersSceneArtistId);
+			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });
 		}
 
 		// if (parsed === choiceProductSceneId) {

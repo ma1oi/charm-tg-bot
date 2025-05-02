@@ -3,7 +3,7 @@ import { backButton } from '@constsants/buttons';
 import { BUTTON_TYPES } from '@/types/keyboard';
 import { ScenesConfig } from '@/types/sceneConfig';
 
-export const enterPromocodeSkinOrderSceneConfig: ScenesConfig = {
+export const paymentSkinOrderSceneConfig: ScenesConfig = {
 	sceneId: 'paymentSkinOrder',
 	text: 'плати',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',

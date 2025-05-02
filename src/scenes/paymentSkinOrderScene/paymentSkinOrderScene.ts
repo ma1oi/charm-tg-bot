@@ -1,8 +1,14 @@
+import { bot } from '@bot';
 import { MyContext } from '@myContext/myContext';
+import { OrderStatus } from '@prisma/client';
 import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { startSceneId } from '@scenes/startScene';
+import { artistService } from '@services/artist';
+import { orderService } from '@services/orders';
+import { userService } from '@services/user';
 import { Scenes } from 'telegraf';
 
-import { enterPromocodeSkinOrderSceneConfig as config } from './enterPromocodeSkinOrderSceneConfig';
+import { paymentSkinOrderSceneConfig as config } from './paymentSkinOrderSceneConfig';
 
 import { backButton } from '@/constsants/buttons';
 import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
@@ -26,6 +32,31 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
 		} else if (parsed === 'paid') {
+			// todo обработка платежа
+
+			const orderData = ctx.session.orderData;
+
+			if (orderData?.orderId !== undefined) {
+				const deletedArtist = await artistService.assignOrderToNextArtist(orderData.orderId);
+
+				console.log(deletedArtist);
+
+				if (deletedArtist) {
+					const artist = await userService.getUserById(deletedArtist.artistId);
+
+					await bot.telegram.sendMessage(Number(artist.tuid), `У тебя новый заказ!\nid_${orderData.orderId}`);
+				} else {
+					const updatedOrder = await orderService.updateOrder({
+						id: orderData.orderId,
+						status: OrderStatus.pending,
+					});
+
+					console.log(updatedOrder);
+				}
+
+				await ctx.editMessageCaption('создан новый заказ');
+				await ctx.scene.enter(startSceneId);
+			}
 		}
 	}
 

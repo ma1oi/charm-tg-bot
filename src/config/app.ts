@@ -11,4 +11,7 @@ function getEnv(key: string): string {
 export const appConfig = {
 	botToken: getEnv('BOT_TOKEN'),
 	databaseUrl: getEnv('DATABASE_URL'),
+	redisPassword: getEnv('REDIS_PASSWORD'),
+	redisPort: getEnv('REDIS_PORT'),
+	redisHost: getEnv('REDIS_HOST'),
 };

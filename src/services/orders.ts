@@ -46,11 +46,11 @@ export const orderService = {
 	},
 
 	async updateOrder(order: Partial<Order> & { id: number }): Promise<Order> {
-		const { id, artistId, status } = order;
+		const { id, artistId, status, skinFileUrl, completedAt } = order;
 
 		const pendingOrder: Order | null = await prisma.order.update({
 			where: { id },
-			data: { artistId, status },
+			data: { artistId, status, skinFileUrl, completedAt },
 		});
 
 		return { ...pendingOrder };

@@ -1,9 +1,9 @@
 import { OrderStatus } from '@prisma/client';
+import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { artistService } from '@services/artist';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
-import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { getOrderSceneConfigArtist } from './getOrderSceneConfig-artist';
@@ -12,13 +12,22 @@ export const getOrderSceneArtistId = getOrderSceneConfigArtist.sceneId;
 export const getOrderSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(getOrderSceneArtistId);
 
 getOrderSceneArtist.enter(async (ctx) => {
-	const order = await orderService.getPendingOrder();
-
-	let message = 'Произошла ошибка';
-
 	if (ctx.from === undefined) return;
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
+
+	const orders = await orderService.getAllActiveArtistOrders(artist.id);
+
+	console.log(Object.values(orders).length);
+	if (Object.values(orders).length >= 5) {
+		await ctx.editMessageText('У вас есть 5 активных заказов');
+		await ctx.scene.enter(getMyOrdersSceneArtistId);
+		return;
+	}
+
+	const order = await orderService.getPendingOrder();
+
+	let message = 'Произошла ошибка';
 
 	if (order) {
 		const updateOrder = await orderService.updateOrder({
@@ -28,7 +37,11 @@ getOrderSceneArtist.enter(async (ctx) => {
 		});
 
 		if (updateOrder) {
-			message = `Id заказа: #id_${order.id}\nОписание: ${order.description}\nСтатус: в работе`;
+			message = `Новый заказ\nId заказа: #id_${order.id}\nОписание: ${order.description}`;
+
+			await ctx.editMessageText(message);
+			await ctx.scene.enter(getMyOrdersSceneArtistId);
+			return;
 		}
 	} else {
 		const added = await artistService.addArtistToQueue(artist.id);
@@ -36,22 +49,17 @@ getOrderSceneArtist.enter(async (ctx) => {
 		if (added) {
 			message = 'Заказов нет. Вы встали в очередь';
 
-			await ctx.sendMessage(message);
-			await ctx.scene.enter(heroSceneArtistId);
-			return;
+			await ctx.editMessageText(message);
 		} else {
 			message = 'Произошла ошибка';
 
-			await ctx.sendMessage(message);
-			await ctx.scene.enter(heroSceneArtistId);
+			await ctx.editMessageText(message);
 
 			throw new Error(added);
 		}
 	}
 
-	await ctx.editMessageText(message, {
-		reply_markup: getMenuKeyboard(getOrderSceneConfigArtist.keyboard).reply_markup,
-	});
+	await ctx.scene.enter(heroSceneArtistId);
 });
 
 getOrderSceneArtist.on('callback_query', async (ctx) => {

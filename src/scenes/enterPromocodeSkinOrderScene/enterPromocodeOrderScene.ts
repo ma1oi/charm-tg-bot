@@ -30,13 +30,20 @@ const createOrder = async (ctx: MyContext): Promise<Order> => {
 		throw new Error('DescriptionProduct name is undefined');
 	}
 
-	return await orderService.createOrder({
+	const createdOrder = await orderService.createOrder({
 		description: orderData.descriptionProduct,
 		customerId: user.id,
 		customerTuid: BigInt(ctx.from.id),
 		nameProduct: orderData.product,
 		promocode: orderData.promocode,
 	});
+
+	ctx.session.orderData = {
+		...ctx.session.orderData,
+		orderId: createdOrder.id,
+	};
+
+	// todo обнулять ctx.session.orderData
 };
 
 enterPromocodeSkinOrderScene.enter(async (ctx) => {

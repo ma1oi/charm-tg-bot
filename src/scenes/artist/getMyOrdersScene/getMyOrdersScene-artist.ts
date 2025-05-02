@@ -2,8 +2,6 @@ import { backButton } from '@constsants/buttons';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { ordersSceneArtistId } from '@scenes/artist/orderScene';
-import { messageSceneId } from '@scenes/messageScene';
-import { startSceneConfig } from '@scenes/startScene/startSceneConfig';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
@@ -39,11 +37,11 @@ getMyOrdersSceneArtist.enter(async (ctx) => {
 	keyboard.push({ type: 'callback', key: backButton.key, label: backButton.label });
 
 	if (from === backButton.key) {
-		await ctx.sendMessage(message, {
+		await ctx.editMessageText(message, {
 			reply_markup: getMenuKeyboard(keyboard).reply_markup,
 		});
 	} else {
-		await ctx.editMessageText(message, {
+		await ctx.sendMessage(message, {
 			reply_markup: getMenuKeyboard(keyboard).reply_markup,
 		});
 	}

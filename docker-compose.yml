@@ -31,6 +31,18 @@ services:
     depends_on:
       - mysql
 
+  redis:
+    image: redis:7-alpine
+    container_name: charm-bot-redis
+    restart: unless-stopped
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - shared-network
+    command: redis-server --requirepass pass
+
 networks:
   shared-network:
     driver: bridge
@@ -38,3 +50,4 @@ networks:
 
 volumes:
   charm-db-data:
+  redis-data:

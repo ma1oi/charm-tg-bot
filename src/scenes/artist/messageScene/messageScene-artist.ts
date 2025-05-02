@@ -1,20 +1,17 @@
-import { appConfig } from '@config/app';
+import { bot } from '@bot';
 import { backButton } from '@constsants/buttons';
-import { MyContext } from '@myContext/myContext';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageService } from '@services/message';
 import { orderService } from '@services/orders';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
-import { Scenes, Telegraf } from 'telegraf';
+import { Scenes } from 'telegraf';
 
 import { messageSceneConfigArtist } from './messageSceneConfig-artist';
 
 export const messageSceneArtistId = messageSceneConfigArtist.sceneId;
 export const messageSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(messageSceneArtistId);
-
-const bot = new Telegraf<MyContext>(appConfig.botToken);
 
 let customerId_: bigint;
 let orderId_: number;

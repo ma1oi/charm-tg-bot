@@ -1,23 +1,26 @@
 import { appConfig } from '@config/app';
+import { redisStore } from '@middlewares/redis';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
 import { MyContext } from '@myContext/myContext';
+import { OrderStatus } from '@prisma/client';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
 import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageSceneArtist } from '@scenes/artist/messageScene';
 import { orderSceneArtist } from '@scenes/artist/orderScene';
+import { submitSkinSceneArtist } from '@scenes/artist/submitSkinScene';
 import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
 import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { messageScene, messageSceneId } from '@scenes/messageScene/messageScene';
 import { orderProductScene } from '@scenes/orderProductScene';
 import { paymentSkinOrderScene } from '@scenes/paymentSkinOrderScene/';
-import { Scenes, Telegraf } from 'telegraf';
+import { orderService } from '@services/orders';
+import { Scenes, session, Telegraf } from 'telegraf';
 
-import { sessionMiddleware } from '@/middlewares/session';
 import { startScene, startSceneId } from '@/scenes/startScene';
 
-const bot = new Telegraf<MyContext>(appConfig.botToken);
+export const bot = new Telegraf<MyContext>(appConfig.botToken);
 
 const stage = new Scenes.Stage<MyContext>([
 	startScene,
@@ -33,11 +36,13 @@ const stage = new Scenes.Stage<MyContext>([
 	getMyOrdersSceneArtist,
 	orderSceneArtist,
 	messageSceneArtist,
+	submitSkinSceneArtist,
 ]);
 
-bot.use(sessionMiddleware);
-bot.use(stage.middleware());
+// @ts-ignore
+bot.use(session<MyContext['session']>({ store: redisStore }));
 
+bot.use(stage.middleware());
 bot.use(upsertUserMiddleware);
 
 bot.command('start', async (ctx) => {
@@ -60,6 +65,21 @@ bot.on('callback_query', async (ctx) => {
 			orderId: Number(key.split('_')[1]),
 			fromScene: ctx.scene.current?.id,
 		});
+	} else if (key.split('_')[0] === 'closeOrder') {
+		const order = Number(key.split('_')[1]);
+
+		const updateOrder = await orderService.updateOrder({
+			id: order,
+			status: OrderStatus.done,
+			completedAt: new Date(),
+		});
+
+		console.log(updateOrder, 'updateOrder');
+
+		await ctx.reply('Спасибо за заказ!');
+
+		await ctx.scene.enter(startSceneId);
+		await ctx.answerCbQuery();
 	}
 });
 

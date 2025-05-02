@@ -1,7 +1,8 @@
 import { backButton } from '@constsants/buttons';
 import { Order } from '@prisma/client';
-import { heroSceneArtistId } from '@scenes/artist/heroScene';
+import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { messageSceneArtistId } from '@scenes/artist/messageScene';
+import { submitSkinSceneArtistId } from '@scenes/artist/submitSkinScene';
 import { orderService } from '@services/orders';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
@@ -44,9 +45,11 @@ orderSceneArtist.on('callback_query', async (ctx) => {
 		console.log(55554, parsed);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });
+			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });
 		} else if (parsed === 'messageCustomer') {
 			await ctx.scene.enter(messageSceneArtistId, { orderId: order_.id });
+		} else if (parsed === 'submitSkin') {
+			await ctx.scene.enter(submitSkinSceneArtistId, { orderId: order_.id });
 		}
 	}
 
