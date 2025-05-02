@@ -1,7 +1,7 @@
-import { messageSceneArtist, messageSceneArtistId } from '@scenes/artist/messageScene';
+import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { choiceProductSceneId } from '@scenes/choiceProductScene';
-import { messageSceneId } from '@scenes/messageScene';
-import { promocodeService } from '@services/promocode';
+import { myOrdersSceneId } from '@scenes/myOrdersScene';
+import { myOrdersSceneConfig } from '@scenes/myOrdersScene/myOrdersSceneConfig';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
@@ -51,6 +51,8 @@ startScene.on('callback_query', async (ctx) => {
 		if (parsed === choiceProductSceneId) {
 			console.log(1123312);
 			await ctx.scene.enter(choiceProductSceneId);
+		} else if (parsed === myOrdersSceneConfig.sceneId) {
+			await ctx.scene.enter(myOrdersSceneId);
 		} else if (parsed.split('_')[0] === 'replyMessage') {
 			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneArtistId, { key: parsed });

@@ -13,7 +13,9 @@ import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScen
 import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { messageScene, messageSceneId } from '@scenes/messageScene/messageScene';
+import { myOrdersScene } from '@scenes/myOrdersScene/';
 import { orderProductScene } from '@scenes/orderProductScene';
+import { orderScene } from '@scenes/orderScene';
 import { paymentSkinOrderScene } from '@scenes/paymentSkinOrderScene/';
 import { orderService } from '@services/orders';
 import { Scenes, session, Telegraf } from 'telegraf';
@@ -30,6 +32,8 @@ const stage = new Scenes.Stage<MyContext>([
 	enterPromocodeSkinOrderScene,
 	paymentSkinOrderScene,
 	messageScene,
+	myOrdersScene,
+	orderScene,
 
 	heroSceneArtist,
 	getOrderSceneArtist,

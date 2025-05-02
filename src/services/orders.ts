@@ -63,4 +63,12 @@ export const orderService = {
 
 		return { ...activeOrders };
 	},
+
+	async getAllUsersOrdersByTuid(tuid: number): Promise<Order[]> {
+		const orders: Order[] = await prisma.order.findMany({
+			where: { customerTuid: tuid },
+		});
+
+		return { ...orders };
+	},
 };

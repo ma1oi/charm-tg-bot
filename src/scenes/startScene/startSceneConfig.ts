@@ -9,6 +9,6 @@ export const startSceneConfig: ScenesConfig = {
 		{ type: 'separator' },
 		{ type: 'url', url: 'https://t.me/charm_support', label: 'Поддержка' },
 		{ type: 'separator' },
-		{ type: 'callback', key: 'choiceProduct', label: 'Мои заказы' },
+		{ type: 'callback', key: 'myOrders', label: 'Мои заказы' },
 	],
 };
