@@ -1,5 +1,4 @@
 import { prisma } from '@config/database';
-import { Message } from '@prisma/client';
 
 type CreateMessageInput = {
 	orderId: number;

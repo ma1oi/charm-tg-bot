@@ -1,6 +1,7 @@
 import { messageSceneArtist, messageSceneArtistId } from '@scenes/artist/messageScene';
 import { choiceProductSceneId } from '@scenes/choiceProductScene';
 import { messageSceneId } from '@scenes/messageScene';
+import { promocodeService } from '@services/promocode';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
@@ -13,6 +14,15 @@ export const startScene = new Scenes.BaseScene<Scenes.SceneContext>(startSceneId
 
 startScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
+
+	// console.log(
+	// 	await promocodeService.createPromocode({
+	// 		code: 'test',
+	// 		discountType: 'fixed',
+	// 		discountValue: 100,
+	// 		maxUses: 1,
+	// 	})
+	// );
 
 	if (from === backButton.key) {
 		await ctx.editMessageCaption(startSceneConfig.text, {

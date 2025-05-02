@@ -82,7 +82,7 @@ model Promocode {
   discountType  DiscountType
   discountValue Float
   expiresAt     DateTime?
-  maxUses       Int?
+  maxUses       Int
   usedCount     Int          @default(0)
 
   usages PromocodeUsage[]

@@ -1,8 +1,9 @@
 import { MyContext } from '@myContext/myContext';
-import { Order } from '@prisma/client';
+import { DiscountType, Order } from '@prisma/client';
 import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
 import { paymentSkinOrderSceneId } from '@scenes/paymentSkinOrderScene';
 import { orderService } from '@services/orders';
+import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
 import { assertFrom } from '@utils/assertFrom';
 import { Scenes } from 'telegraf';
@@ -35,7 +36,7 @@ const createOrder = async (ctx: MyContext): Promise<Order> => {
 		customerId: user.id,
 		customerTuid: BigInt(ctx.from.id),
 		nameProduct: orderData.product,
-		promocode: orderData.promocode,
+		promocode: ctx.text,
 	});
 
 	ctx.session.orderData = {
@@ -56,14 +57,43 @@ enterPromocodeSkinOrderScene.enter(async (ctx) => {
 enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 	console.log(111222, ctx.text);
 
-	ctx.session.orderData = {
-		...ctx.session.orderData,
-		promocode: ctx.message.text,
-	};
+	// ctx.session.orderData = {
+	// 	...ctx.session.orderData,
+	// 	promocode: ctx.message.text,
+	// };
 
 	await createOrder(ctx);
 
-	// const orderData = ctx.session.orderData;
+	const promocode = await promocodeService.getPromocodeByCode(ctx.message.text);
+
+	if (promocode) {
+		// todo ровершка на использрование промокода этим же челом несколько раз
+		// todo УБРАТЬ !!!!
+		// todo добавлять в бд что использовал
+		// todo добавлять 1 использование
+
+		if (promocode.usedCount < promocode.maxUses!) {
+			if (promocode.discountType === DiscountType.fixed) {
+				ctx.session.orderData = {
+					...ctx.session.orderData,
+					promocode: promocode.discountValue.toString(),
+				};
+			} else if (promocode.discountType === DiscountType.percent) {
+				ctx.session.orderData = {
+					...ctx.session.orderData,
+					promocode: promocode.discountValue + '%',
+				};
+			}
+		}
+	} else {
+		ctx.session.orderData = {
+			...ctx.session.orderData,
+			promocode: undefined,
+		};
+	}
+
+	await ctx.scene.enter(paymentSkinOrderSceneId);
+
 	//
 	// // todo промокод есть или нет
 	//

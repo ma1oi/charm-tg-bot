@@ -66,6 +66,8 @@ bot.on('callback_query', async (ctx) => {
 			fromScene: ctx.scene.current?.id,
 		});
 	} else if (key.split('_')[0] === 'closeOrder') {
+		// todo не работает
+
 		const order = Number(key.split('_')[1]);
 
 		const updateOrder = await orderService.updateOrder({

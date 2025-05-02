@@ -1,6 +1,7 @@
 import { MyContext } from '@myContext/myContext';
 import { messageSceneId } from '@scenes/messageScene';
 import { orderProductSceneId } from '@scenes/orderProductScene/orderProductScene';
+import { startSceneId } from '@scenes/startScene';
 import { Scenes } from 'telegraf';
 
 import { choiceProductSceneConfig as config } from './choiceProductSceneConfig';
@@ -32,7 +33,7 @@ choiceProductScene.on('callback_query', async (ctx) => {
 		const parsed = JSON.parse(key);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter('start', { from: backButton.key });
+			await ctx.scene.enter(startSceneId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
 			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
