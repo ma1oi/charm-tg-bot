@@ -1,5 +1,5 @@
 import { prisma } from '@config/database';
-import { Promocode, PromocodeUsage } from '@prisma/client';
+import { Promocode, PromocodeUsage, User } from '@prisma/client';
 
 type CreatePromocodeInput = {
 	code: string;
@@ -10,7 +10,7 @@ type CreatePromocodeInput = {
 };
 
 export const promocodeService = {
-	async createPromocode(promocode: CreatePromocodeInput): Promise<CreatePromocodeInput> {
+	async createPromocode(promocode: CreatePromocodeInput): Promise<Promocode> {
 		const created = await prisma.promocode.create({
 			data: { ...promocode },
 		});
@@ -18,57 +18,63 @@ export const promocodeService = {
 		return { ...created };
 	},
 
-	async getPromocodeById(id: number): Promise<CreatePromocodeInput> {
-		const promo = await prisma.promocode.findUnique({
+	async getPromocodeById(id: Promocode['id']): Promise<Promocode> {
+		const promocode = await prisma.promocode.findUnique({
 			where: { id },
 		});
-
-		return { ...promo };
+		if (!promocode) {
+			throw new Error(`Promocode with id ${id} not found`);
+		}
+		return promocode;
 	},
 
-	async getPromocodeByCode(code: string): Promise<Promocode> {
-		const promo = await prisma.promocode.findUnique({
+	async getPromocodeByCode(code: Promocode['code']): Promise<Promocode> {
+		const promocode = await prisma.promocode.findUnique({
 			where: { code },
 		});
 
-		return { ...promo };
+		if (!promocode) {
+			throw new Error(`Promocode with code ${code} not found`);
+		}
+		return promocode;
 	},
 
-	async getPromocodeUsage(userId: number, promocodeId: number): Promise<Promocode> {
-		const promo = await prisma.promocodeUsage.findFirst({
+	async getPromocodeUsage(userId: User['id'], promocodeId: Promocode['id']): Promise<Promocode> {
+		const promocode = await prisma.promocodeUsage.findFirst({
 			where: { userId, promocodeId },
 		});
 
-		return { ...promo };
+		if (!promocode) {
+			throw new Error(`Promocode with userId ${userId} or with promocodeId ${promocodeId} not found`);
+		}
+		return promocode;
 	},
 
 	async createPromocodeUsage(promocode: Omit<PromocodeUsage, 'id' | 'usedAt'>): Promise<Promocode> {
-		const promo = await prisma.promocodeUsage.create({
+		return prisma.promocodeUsage.create({
 			data: { ...promocode },
 		});
-
-		return promo;
 	},
 
 	async addUsePromocode(id: number): Promise<Promocode> {
-		const promo = await prisma.promocode.update({
+		return prisma.promocode.update({
 			where: { id },
 			data: {
 				usedCount: { increment: 1 },
 			},
 		});
-
-		return promo;
 	},
 
 	async updatePromocode(promocode: Partial<Promocode> & { id: number }): Promise<Promocode> {
 		const { id, ...data } = promocode;
 
-		const promo = await prisma.promocode.update({
+		return prisma.promocode.update({
 			where: { id },
 			data,
 		});
+	},
 
-		return promo;
+	async getAllPromocodes(): Promise<Promocode[]> {
+		return prisma.promocode.findMany({});
 	},
 };

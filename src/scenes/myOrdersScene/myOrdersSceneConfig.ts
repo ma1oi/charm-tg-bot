@@ -5,6 +5,8 @@ import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 import { ScenesConfig } from '@/types/sceneConfig';
 
 const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) => {
+	// todo переписаать как в промокодах!!!!!!
+
 	let ordersKeyboardArray: KeyboardButton[] = [];
 
 	if (orders.length > countNext) {

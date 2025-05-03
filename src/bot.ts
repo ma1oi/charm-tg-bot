@@ -1,8 +1,12 @@
 import { appConfig } from '@config/app';
 import { redisStore } from '@middlewares/redis';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
-import { MyContext } from '@myContext/myContext';
+import { MyContextWizard } from '@myContext/myContext';
 import { OrderStatus } from '@prisma/client';
+import { createPromocodeSceneAdmin } from '@scenes/admin/createPromocodeScene';
+import { heroSceneAdmin, heroSceneAdminId } from '@scenes/admin/heroScene';
+import { promocodeAdminScene } from '@scenes/admin/promocodeScene';
+import { promocodesSceneAdmin } from '@scenes/admin/promocodesScene';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
 import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
@@ -22,9 +26,9 @@ import { Scenes, session, Telegraf } from 'telegraf';
 
 import { startScene, startSceneId } from '@/scenes/startScene';
 
-export const bot = new Telegraf<MyContext>(appConfig.botToken);
+export const bot = new Telegraf<MyContextWizard>(appConfig.botToken);
 
-const stage = new Scenes.Stage<MyContext>([
+const stage = new Scenes.Stage<MyContextWizard>([
 	startScene,
 	choiceProductScene,
 	orderProductScene,
@@ -41,10 +45,17 @@ const stage = new Scenes.Stage<MyContext>([
 	orderSceneArtist,
 	messageSceneArtist,
 	submitSkinSceneArtist,
+
+	heroSceneAdmin,
+	createPromocodeSceneAdmin,
+	promocodesSceneAdmin,
+	promocodeAdminScene,
 ]);
 
 // @ts-ignore
-bot.use(session<MyContext['session']>({ store: redisStore }));
+bot.use(session<MySessionWizard>({ defaultSession: () => ({}) }));
+
+// bot.use(session<MySessionWizard>({ store: redisStore, defaultSession: () => ({}) }));
 
 bot.use(stage.middleware());
 bot.use(upsertUserMiddleware);
@@ -55,6 +66,10 @@ bot.command('start', async (ctx) => {
 
 bot.command('artist', async (ctx) => {
 	await ctx.scene.enter(heroSceneArtistId);
+});
+
+bot.command('admin', async (ctx) => {
+	await ctx.scene.enter(heroSceneAdminId);
 });
 
 bot.on('callback_query', async (ctx) => {
