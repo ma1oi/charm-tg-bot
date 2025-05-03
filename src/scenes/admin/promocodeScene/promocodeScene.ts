@@ -1,0 +1,52 @@
+import { backButton } from '@constsants/buttons';
+import { heroSceneAdminId } from '@scenes/admin/heroScene';
+import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
+import { messageSceneId } from '@scenes/messageScene';
+import { startSceneId } from '@scenes/startScene';
+import { promocodeService } from '@services/promocode';
+import { Scenes } from 'telegraf';
+
+import { promocodeSceneConfig } from './promocodeSceneConfig';
+
+export const promocodeAdminSceneId = promocodeSceneConfig.sceneId;
+export const promocodeAdminScene = new Scenes.BaseScene<Scenes.SceneContext>(promocodeAdminSceneId);
+
+promocodeAdminScene.enter(async (ctx) => {
+	if (!ctx.from) {
+		throw new Error('ctx.from not implemented');
+	}
+
+	const { promocodeId } = ctx.scene.state as { promocodeId: number };
+
+	console.log(18991919191, promocodeId);
+
+	const promocode = await promocodeService.getPromocodeById(promocodeId);
+
+	const message = `промокод #id_${promocode.id}\nНазвание: ${promocode.code}\nТип: ${promocode.discountType}\nСкидка: ${promocode.discountValue}\nИспользований: ${promocode.usedCount}/${promocode.maxUses}\nЗакончен: ${promocode.expiresAt ?? 'не закончен'}`;
+
+	await ctx.editMessageText(message);
+	await ctx.scene.enter(heroSceneAdminId);
+});
+
+promocodeAdminScene.on('callback_query', async (ctx) => {
+	const callback = ctx.callbackQuery;
+
+	if ('data' in callback) {
+		const key = callback.data;
+
+		console.log(key);
+
+		const parsed = JSON.parse(key);
+
+		console.log(55554, parsed);
+
+		if (parsed === backButton.key) {
+			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });
+		} else if (parsed.split('_')[0] === 'replyMessage') {
+			console.log(9898, parsed);
+			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
+		}
+	}
+
+	await ctx.answerCbQuery();
+});
