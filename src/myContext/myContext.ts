@@ -4,6 +4,7 @@ type OrderData = {
 	product?: string;
 	descriptionProduct?: string;
 	promocode?: string;
+	promocodeName?: string;
 	orderId?: number;
 };
 

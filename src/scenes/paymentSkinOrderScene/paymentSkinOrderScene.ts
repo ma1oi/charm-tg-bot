@@ -6,6 +6,7 @@ import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderS
 import { startSceneId } from '@scenes/startScene';
 import { artistService } from '@services/artist';
 import { orderService } from '@services/orders';
+import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
 import { assertFrom } from '@utils/assertFrom';
 import { Scenes } from 'telegraf';
@@ -25,6 +26,7 @@ paymentSkinOrderScene.enter(async (ctx) => {
 	const orderData = ctx.session.orderData;
 
 	let amount: number;
+	let amountMessage = '';
 
 	// todo в utils и в ордерпродукт
 	const findProductById = (id: number) => {
@@ -39,7 +41,7 @@ paymentSkinOrderScene.enter(async (ctx) => {
 
 	const product = findProductById(productId);
 
-	console.log(orderData.promocode);
+	console.log(111, orderData.promocode);
 
 	if (orderData.promocode) {
 		const applyDiscount = (price: number, promocode?: string): number => {
@@ -52,10 +54,15 @@ paymentSkinOrderScene.enter(async (ctx) => {
 				if (isNaN(percent)) return price;
 
 				const discount = (price * percent) / 100;
-				return Math.max(0, price - discount); // Не уходим в минус
+
+				amountMessage = `${percent}%`;
+
+				return Math.max(0, price - discount);
 			} else {
 				const fixed = parseFloat(promocode);
 				if (isNaN(fixed)) return price;
+
+				amountMessage = `${fixed}р`;
 
 				return Math.max(0, price - fixed); // Не уходим в минус
 			}
@@ -65,8 +72,9 @@ paymentSkinOrderScene.enter(async (ctx) => {
 	} else {
 		amount = Number(product?.cost);
 	}
+
 	// todo
-	await ctx.sendMessage(amount.toString() + ` (-${product?.cost - amount})`, {
+	await ctx.sendMessage(amount.toString() + ` (Скидка: ${amountMessage})`, {
 		reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
 	});
 });
@@ -82,9 +90,28 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
 		} else if (parsed === 'paid') {
-			// todo обработка платежа
+			// todo обработка платежа\
+			// промокод todo УБРАТЬ !
 
 			const orderData = ctx.session.orderData;
+
+			console.log(1111, orderData);
+
+			const promocode = await promocodeService.getPromocodeByCode(orderData.promocodeName);
+
+			if (promocode.usedCount + 1 === promocode.maxUses!) {
+				await promocodeService.updatePromocode({ id: promocode.id, expiresAt: new Date() });
+			}
+
+			const user = await userService.getUserByTuid(BigInt(ctx.from.id));
+
+			await promocodeService.createPromocodeUsage({
+				promocodeId: promocode.id,
+				userId: user.id,
+				orderId: Number(orderData.orderId),
+			});
+
+			await promocodeService.addUsePromocode(promocode.id);
 
 			if (orderData?.orderId !== undefined) {
 				const deletedArtist = await artistService.assignOrderToNextArtist(orderData.orderId);
@@ -105,6 +132,7 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 				}
 
 				await ctx.editMessageText('создан новый заказ');
+				ctx.session.orderData = {};
 				await ctx.scene.enter(startSceneId);
 			}
 		}

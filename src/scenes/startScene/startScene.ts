@@ -1,3 +1,4 @@
+import { MyContext } from '@myContext/myContext';
 import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { choiceProductSceneId } from '@scenes/choiceProductScene';
 import { myOrdersSceneId } from '@scenes/myOrdersScene';
@@ -10,9 +11,11 @@ import { startSceneConfig } from './startSceneConfig';
 import { backButton } from '@/constsants/buttons';
 
 export const startSceneId = startSceneConfig.sceneId;
-export const startScene = new Scenes.BaseScene<Scenes.SceneContext>(startSceneId);
+export const startScene = new Scenes.BaseScene<MyContext>(startSceneId);
 
 startScene.enter(async (ctx) => {
+	ctx.session.orderData = {};
+
 	const { from } = ctx.scene.state as { from: string };
 
 	// console.log(

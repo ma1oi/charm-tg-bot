@@ -62,37 +62,60 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 	// 	promocode: ctx.message.text,
 	// };
 
-	await createOrder(ctx);
+	ctx.session.orderData = {
+		...ctx.session.orderData,
+		promocodeName: ctx.message.text,
+	};
 
 	const promocode = await promocodeService.getPromocodeByCode(ctx.message.text);
 
-	if (promocode) {
+	if (Object.keys(promocode).length !== 0) {
+		const user = await userService.getUserByTuid(BigInt(ctx.from.id));
+
+		const usege = await promocodeService.getPromocodeUsage(user.id, promocode.id);
+		console.log(usege);
+
+		if (Object.keys(usege).length === 0) {
+			if (promocode.usedCount < promocode.maxUses!) {
+				if (promocode.discountType === DiscountType.fixed) {
+					ctx.session.orderData = {
+						...ctx.session.orderData,
+						promocode: promocode.discountValue.toString(),
+					};
+				} else if (promocode.discountType === DiscountType.percent) {
+					ctx.session.orderData = {
+						...ctx.session.orderData,
+						promocode: promocode.discountValue + '%',
+					};
+				}
+			} else {
+				await ctx.sendMessage('кончились активации');
+				await ctx.scene.reenter();
+				return;
+			}
+
+			await createOrder(ctx);
+			await ctx.scene.enter(paymentSkinOrderSceneId);
+		} else {
+			console.log('usage');
+			await ctx.sendMessage('вы уже спользовалит');
+			await ctx.scene.reenter();
+		}
+
 		// todo ровершка на использрование промокода этим же челом несколько раз
 		// todo УБРАТЬ !!!!
 		// todo добавлять в бд что использовал
 		// todo добавлять 1 использование
-
-		if (promocode.usedCount < promocode.maxUses!) {
-			if (promocode.discountType === DiscountType.fixed) {
-				ctx.session.orderData = {
-					...ctx.session.orderData,
-					promocode: promocode.discountValue.toString(),
-				};
-			} else if (promocode.discountType === DiscountType.percent) {
-				ctx.session.orderData = {
-					...ctx.session.orderData,
-					promocode: promocode.discountValue + '%',
-				};
-			}
-		}
 	} else {
 		ctx.session.orderData = {
 			...ctx.session.orderData,
 			promocode: undefined,
+			promocodeName: undefined,
 		};
-	}
 
-	await ctx.scene.enter(paymentSkinOrderSceneId);
+		await ctx.sendMessage('промо не существует');
+		await ctx.scene.reenter();
+	}
 
 	//
 	// // todo промокод есть или нет
@@ -118,12 +141,10 @@ enterPromocodeSkinOrderScene.on('callback_query', async (ctx) => {
 
 		if (parsed === promocodeButton.key) {
 			console.log(11111);
-
-			const createdOrder = await createOrder(ctx);
-
+			await createOrder(ctx);
 			await ctx.scene.enter(paymentSkinOrderSceneId);
 		} else if (parsed === backButton.key) {
-			await ctx.scene.enter(descriptionSkinOrderSceneId);
+			await ctx.scene.enter(descriptionSkinOrderSceneId, { key: parsed });
 		}
 	}
 
