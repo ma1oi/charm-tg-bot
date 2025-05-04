@@ -1,20 +1,19 @@
 import { bot } from '@bot';
+import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
 import { OrderStatus } from '@prisma/client';
-import { products } from '@scenes/choiceProductScene';
-import { enterPromocodeSkinOrderSceneId } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
-import { startSceneId } from '@scenes/startScene';
+import { products } from '@scenes/customer/choiceProductScene';
+import { enterPromocodeSkinOrderSceneId } from '@scenes/customer/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { startSceneId } from '@scenes/customer/startScene';
 import { artistService } from '@services/artist';
-import { orderService } from '@services/orders';
+import { orderService } from '@services/order';
 import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
 import { assertFrom } from '@utils/assertFrom';
+import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { paymentSkinOrderSceneConfig as config } from './paymentSkinOrderSceneConfig';
-
-import { backButton } from '@/constsants/buttons';
-import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
 
 export const paymentSkinOrderSceneId = config.sceneId;
 
@@ -137,6 +136,5 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 			}
 		}
 	}
-
 	await ctx.answerCbQuery();
 });

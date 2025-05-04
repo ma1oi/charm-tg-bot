@@ -1,17 +1,16 @@
+import { backButton, promocodeButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
 import { DiscountType, Order } from '@prisma/client';
-import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
-import { paymentSkinOrderSceneId } from '@scenes/paymentSkinOrderScene';
-import { orderService } from '@services/orders';
+import { descriptionSkinOrderSceneId } from '@scenes/customer/descriptionSkinOrderScene';
+import { paymentSkinOrderSceneId } from '@scenes/customer/paymentSkinOrderScene';
+import { orderService } from '@services/order';
 import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
 import { assertFrom } from '@utils/assertFrom';
+import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { enterPromocodeSkinOrderSceneConfig as config } from './enterPromocodeSkinOrderSceneConfig';
-
-import { backButton, promocodeButton } from '@/constsants/buttons';
-import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
 
 export const enterPromocodeSkinOrderSceneId = config.sceneId;
 

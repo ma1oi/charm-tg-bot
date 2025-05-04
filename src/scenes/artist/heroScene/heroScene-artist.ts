@@ -1,10 +1,9 @@
 import { Role } from '@prisma/client';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtistId } from '@scenes/artist/getOrderScene';
-import { startSceneId } from '@scenes/startScene';
-import { orderService } from '@services/orders';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
+import { startSceneId } from 'src/scenes/customer/startScene';
 import { Scenes } from 'telegraf';
 
 import { heroSceneConfigArtist } from './heroSceneConfig-artist';

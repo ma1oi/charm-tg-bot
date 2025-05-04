@@ -1,5 +1,6 @@
-import { backButton } from '@/constsants/buttons';
-import { products } from '@/scenes/choiceProductScene';
+import { backButton } from '@constsants/buttons';
+import { products } from '@scenes/customer/choiceProductScene/index';
+
 import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 import { ScenesConfig } from '@/types/sceneConfig';
 

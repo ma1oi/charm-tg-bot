@@ -1,15 +1,10 @@
 import { Role } from '@prisma/client';
-import {
-	createPromocodeSceneAdmin,
-	createPromocodeSceneAdminId,
-	createPromocodeSceneId,
-} from '@scenes/admin/createPromocodeScene/createPromocodeScene-admin';
-import { promocodesAdminSceneId, promocodesSceneAdmin } from '@scenes/admin/promocodesScene';
-import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
-import { getOrderSceneArtistId } from '@scenes/artist/getOrderScene';
-import { startSceneId } from '@scenes/startScene';
+import { createPromocodeSceneAdminId } from '@scenes/admin/createPromocodeScene/createPromocodeScene-admin';
+import { promocodesAdminSceneId } from '@scenes/admin/promocodesScene';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
+import { artistsAdminSceneId } from 'src/scenes/admin/artistsScene';
+import { startSceneId } from 'src/scenes/customer/startScene';
 import { Scenes } from 'telegraf';
 
 import { heroSceneConfigAdmin } from './heroSceneConfig-admin';
@@ -58,6 +53,8 @@ heroSceneAdmin.on('callback_query', async (ctx) => {
 		} else if (parsed === promocodesAdminSceneId) {
 			console.log(1231);
 			await ctx.scene.enter(promocodesAdminSceneId);
+		} else if (parsed === 'artists') {
+			await ctx.scene.enter(artistsAdminSceneId);
 		}
 
 		// if (parsed === choiceProductSceneId) {

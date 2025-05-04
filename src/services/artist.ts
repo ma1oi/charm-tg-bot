@@ -1,5 +1,5 @@
 import { prisma } from '@config/database';
-import { OrderStatus } from '@prisma/client';
+import { Order, OrderStatus, Role, User } from '@prisma/client';
 
 export const artistService = {
 	async addArtistToQueue(artistId: number) {
@@ -32,5 +32,26 @@ export const artistService = {
 		});
 
 		return deletedArtist;
+	},
+
+	async getAllArtists(): Promise<User[]> {
+		return prisma.user.findMany({
+			where: { role: Role.artist },
+		});
+	},
+
+	async getCountAllDoneOrderArtist(artistId: User['id']): Promise<number> {
+		return prisma.order.count({
+			where: { artistId, status: OrderStatus.done },
+		});
+	},
+
+	async dismissAndHireArtist(artistTuid: User['tuid'], action: 'hire' | 'dismiss'): Promise<User> {
+		const role = action === 'hire' ? Role.artist : Role.customer;
+
+		return prisma.user.update({
+			where: { tuid: artistTuid },
+			data: { role: role },
+		});
 	},
 };

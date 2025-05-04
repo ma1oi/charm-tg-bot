@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 
 import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 
-export const getMenuKeyboard = (keyboard: KeyboardButton[] | (() => KeyboardButton[]), key?: string) => {
+export const getMenuKeyboard = (keyboard: KeyboardButton[] | (() => KeyboardButton[])) => {
 	const actualKeyboard = typeof keyboard === 'function' ? keyboard() : keyboard;
 
 	const rows: ReturnType<typeof Markup.button.callback | typeof Markup.button.url>[][] = [];

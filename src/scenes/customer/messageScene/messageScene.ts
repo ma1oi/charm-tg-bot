@@ -1,10 +1,8 @@
 import { appConfig } from '@config/app';
 import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
-import { heroSceneArtistId } from '@scenes/artist/heroScene';
-import { startSceneId } from '@scenes/startScene';
 import { messageService } from '@services/message';
-import { orderService } from '@services/orders';
+import { orderService } from '@services/order';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes, Telegraf } from 'telegraf';

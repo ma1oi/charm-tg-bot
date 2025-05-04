@@ -1,6 +1,6 @@
+import { backButton } from '@constsants/buttons';
 import { Order } from '@prisma/client';
 
-import { backButton } from '@/constsants/buttons';
 import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 import { ScenesConfig } from '@/types/sceneConfig';
 

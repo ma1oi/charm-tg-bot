@@ -1,9 +1,8 @@
 import { backButton } from '@constsants/buttons';
 import { heroSceneAdminId } from '@scenes/admin/heroScene';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
-import { messageSceneId } from '@scenes/messageScene';
-import { startSceneId } from '@scenes/startScene';
 import { promocodeService } from '@services/promocode';
+import { messageSceneId } from 'src/scenes/customer/messageScene';
 import { Scenes } from 'telegraf';
 
 import { promocodeSceneConfig } from './promocodeSceneConfig';
@@ -18,8 +17,6 @@ promocodeAdminScene.enter(async (ctx) => {
 
 	const { promocodeId } = ctx.scene.state as { promocodeId: number };
 
-	console.log(18991919191, promocodeId);
-
 	const promocode = await promocodeService.getPromocodeById(promocodeId);
 
 	const message = `промокод #id_${promocode.id}\nНазвание: ${promocode.code}\nТип: ${promocode.discountType}\nСкидка: ${promocode.discountValue}\nИспользований: ${promocode.usedCount}/${promocode.maxUses}\nЗакончен: ${promocode.expiresAt ?? 'не закончен'}`;
@@ -33,12 +30,7 @@ promocodeAdminScene.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
-
-		console.log(55554, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });

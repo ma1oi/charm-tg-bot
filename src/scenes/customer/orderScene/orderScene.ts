@@ -1,8 +1,8 @@
 import { backButton } from '@constsants/buttons';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
-import { messageSceneId } from '@scenes/messageScene';
-import { startSceneId } from '@scenes/startScene';
-import { orderService } from '@services/orders';
+import { messageSceneId } from '@scenes/customer/messageScene';
+import { startSceneId } from '@scenes/customer/startScene';
+import { orderService } from '@services/order';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 

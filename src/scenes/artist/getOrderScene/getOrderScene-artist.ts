@@ -2,7 +2,7 @@ import { OrderStatus } from '@prisma/client';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { artistService } from '@services/artist';
-import { orderService } from '@services/orders';
+import { orderService } from '@services/order';
 import { userService } from '@services/user';
 import { Scenes } from 'telegraf';
 

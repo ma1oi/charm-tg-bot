@@ -3,7 +3,7 @@ import { backButton } from '@constsants/buttons';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageService } from '@services/message';
-import { orderService } from '@services/orders';
+import { orderService } from '@services/order';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';

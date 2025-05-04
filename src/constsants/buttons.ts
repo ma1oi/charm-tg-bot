@@ -3,10 +3,6 @@ export const backButton = {
 	label: 'Назад',
 };
 
-export const productButton = {
-	key: 'product',
-};
-
 export const promocodeButton = {
 	key: 'notPromocode',
 	label: 'нет промокода',

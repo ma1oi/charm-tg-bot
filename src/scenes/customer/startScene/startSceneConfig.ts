@@ -1,4 +1,4 @@
-import { ScenesConfig } from '@/types/sceneConfig';
+import { ScenesConfig } from '@types/sceneConfig';
 
 export const startSceneConfig: ScenesConfig = {
 	sceneId: 'start',

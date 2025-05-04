@@ -1,15 +1,14 @@
+import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
-import { messageSceneId } from '@scenes/messageScene';
-import { ordersSceneId } from '@scenes/orderScene';
-import { startSceneId } from '@scenes/startScene';
-import { orderService } from '@services/orders';
+import { messageSceneId } from '@scenes/customer/messageScene';
+import { ordersSceneId } from '@scenes/customer/orderScene';
+import { startSceneId } from '@scenes/customer/startScene';
+import { orderService } from '@services/order';
 import { assertFrom } from '@utils/assertFrom';
+import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { myOrdersSceneConfig as config, myOrdersSceneConfig, myOrdersSceneConfigkeyboard } from './myOrdersSceneConfig';
-
-import { backButton } from '@/constsants/buttons';
-import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
 
 export const myOrdersSceneId = config.sceneId;
 

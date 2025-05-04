@@ -1,14 +1,13 @@
+import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
 import { messageSceneArtistId } from '@scenes/artist/messageScene';
-import { choiceProductSceneId } from '@scenes/choiceProductScene';
-import { myOrdersSceneId } from '@scenes/myOrdersScene';
-import { myOrdersSceneConfig } from '@scenes/myOrdersScene/myOrdersSceneConfig';
+import { choiceProductSceneId } from '@scenes/customer/choiceProductScene';
+import { myOrdersSceneId } from '@scenes/customer/myOrdersScene';
+import { myOrdersSceneConfig } from '@scenes/customer/myOrdersScene/myOrdersSceneConfig';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { startSceneConfig } from './startSceneConfig';
-
-import { backButton } from '@/constsants/buttons';
 
 export const startSceneId = startSceneConfig.sceneId;
 export const startScene = new Scenes.BaseScene<MyContext>(startSceneId);

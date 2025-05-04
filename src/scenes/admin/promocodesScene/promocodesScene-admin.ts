@@ -1,8 +1,8 @@
 import { MyContext } from '@myContext/myContext';
 import { heroSceneAdminId } from '@scenes/admin/heroScene';
 import { promocodeAdminSceneId } from '@scenes/admin/promocodeScene';
-import { messageSceneId } from '@scenes/messageScene';
 import { promocodeService } from '@services/promocode';
+import { messageSceneId } from 'src/scenes/customer/messageScene';
 import { Scenes } from 'telegraf';
 
 import {

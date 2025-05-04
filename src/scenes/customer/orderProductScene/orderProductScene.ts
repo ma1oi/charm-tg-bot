@@ -1,13 +1,12 @@
+import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
-import { choiceProductSceneId, products } from '@scenes/choiceProductScene';
-import { descriptionSkinOrderSceneId } from '@scenes/descriptionSkinOrderScene';
-import { messageSceneId } from '@scenes/messageScene';
+import { choiceProductSceneId, products } from '@scenes/customer/choiceProductScene';
+import { descriptionSkinOrderSceneId } from '@scenes/customer/descriptionSkinOrderScene';
+import { messageSceneId } from '@scenes/customer/messageScene';
+import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { orderProductSceneConfig as config } from './orderProductSceneConfig';
-
-import { backButton } from '@/constsants/buttons';
-import { getMenuKeyboard } from '@/utils/getMenuKeyboard';
 
 export const orderProductSceneId = config.sceneId;
 

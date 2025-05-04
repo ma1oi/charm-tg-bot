@@ -3,7 +3,7 @@ import { Order } from '@prisma/client';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { submitSkinSceneArtistId } from '@scenes/artist/submitSkinScene';
-import { orderService } from '@services/orders';
+import { orderService } from '@services/order';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 

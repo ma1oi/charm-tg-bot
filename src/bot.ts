@@ -3,8 +3,11 @@ import { redisStore } from '@middlewares/redis';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
 import { MyContextWizard } from '@myContext/myContext';
 import { OrderStatus } from '@prisma/client';
+import { allArtistsSceneAdmin } from '@scenes/admin/allArtistsScene';
+import { artistAdminScene } from '@scenes/admin/artistScene';
 import { createPromocodeSceneAdmin } from '@scenes/admin/createPromocodeScene';
 import { heroSceneAdmin, heroSceneAdminId } from '@scenes/admin/heroScene';
+import { hireArtistAdminScene } from '@scenes/admin/hireScene';
 import { promocodeAdminScene } from '@scenes/admin/promocodeScene';
 import { promocodesSceneAdmin } from '@scenes/admin/promocodesScene';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
@@ -13,18 +16,18 @@ import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
 import { messageSceneArtist } from '@scenes/artist/messageScene';
 import { orderSceneArtist } from '@scenes/artist/orderScene';
 import { submitSkinSceneArtist } from '@scenes/artist/submitSkinScene';
-import { choiceProductScene } from '@scenes/choiceProductScene/choiceProductScene';
-import { descriptionSkinOrderScene } from '@scenes/descriptionSkinOrderScene';
-import { enterPromocodeSkinOrderScene } from '@scenes/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
-import { messageScene, messageSceneId } from '@scenes/messageScene/messageScene';
-import { myOrdersScene } from '@scenes/myOrdersScene/';
-import { orderProductScene } from '@scenes/orderProductScene';
-import { orderScene } from '@scenes/orderScene';
-import { paymentSkinOrderScene } from '@scenes/paymentSkinOrderScene/';
-import { orderService } from '@services/orders';
+import { choiceProductScene } from '@scenes/customer/choiceProductScene/choiceProductScene';
+import { enterPromocodeSkinOrderScene } from '@scenes/customer/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
+import { messageScene, messageSceneId } from '@scenes/customer/messageScene/messageScene';
+import { myOrdersScene } from '@scenes/customer/myOrdersScene/';
+import { paymentSkinOrderScene } from '@scenes/customer/paymentSkinOrderScene/';
+import { orderService } from '@services/order';
+import { artistsAdminScene } from 'src/scenes/admin/artistsScene';
+import { descriptionSkinOrderScene } from 'src/scenes/customer/descriptionSkinOrderScene';
+import { orderProductScene } from 'src/scenes/customer/orderProductScene';
+import { orderScene } from 'src/scenes/customer/orderScene';
+import { startScene, startSceneId } from 'src/scenes/customer/startScene';
 import { Scenes, session, Telegraf } from 'telegraf';
-
-import { startScene, startSceneId } from '@/scenes/startScene';
 
 export const bot = new Telegraf<MyContextWizard>(appConfig.botToken);
 
@@ -50,6 +53,10 @@ const stage = new Scenes.Stage<MyContextWizard>([
 	createPromocodeSceneAdmin,
 	promocodesSceneAdmin,
 	promocodeAdminScene,
+	artistsAdminScene,
+	allArtistsSceneAdmin,
+	artistAdminScene,
+	hireArtistAdminScene,
 ]);
 
 // @ts-ignore
