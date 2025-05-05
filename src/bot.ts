@@ -5,11 +5,13 @@ import { MyContextWizard } from '@myContext/myContext';
 import { OrderStatus } from '@prisma/client';
 import { allArtistsSceneAdmin } from '@scenes/admin/allArtistsScene';
 import { artistAdminScene } from '@scenes/admin/artistScene';
+import { closeOrderAdminScene } from '@scenes/admin/closeOrderScene';
 import { createPromocodeSceneAdmin } from '@scenes/admin/createPromocodeScene';
 import { heroSceneAdmin, heroSceneAdminId } from '@scenes/admin/heroScene';
 import { hireArtistAdminScene } from '@scenes/admin/hireScene';
 import { promocodeAdminScene } from '@scenes/admin/promocodeScene';
 import { promocodesSceneAdmin } from '@scenes/admin/promocodesScene';
+import { transferOrderToArtistAdminScene } from '@scenes/admin/transferOrderToArtistScene';
 import { getMyOrdersSceneArtist } from '@scenes/artist/getMyOrdersScene/getMyOrdersScene-artist';
 import { getOrderSceneArtist } from '@scenes/artist/getOrderScene';
 import { heroSceneArtist, heroSceneArtistId } from '@scenes/artist/heroScene';
@@ -57,6 +59,8 @@ const stage = new Scenes.Stage<MyContextWizard>([
 	allArtistsSceneAdmin,
 	artistAdminScene,
 	hireArtistAdminScene,
+	transferOrderToArtistAdminScene,
+	closeOrderAdminScene,
 ]);
 
 // @ts-ignore

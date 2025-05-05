@@ -3,6 +3,7 @@ import { MyContext } from '@myContext/myContext';
 import { DiscountType, Order } from '@prisma/client';
 import { descriptionSkinOrderSceneId } from '@scenes/customer/descriptionSkinOrderScene';
 import { paymentSkinOrderSceneId } from '@scenes/customer/paymentSkinOrderScene';
+import { artistService } from '@services/artist';
 import { orderService } from '@services/order';
 import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
@@ -13,7 +14,6 @@ import { Scenes } from 'telegraf';
 import { enterPromocodeSkinOrderSceneConfig as config } from './enterPromocodeSkinOrderSceneConfig';
 
 export const enterPromocodeSkinOrderSceneId = config.sceneId;
-
 export const enterPromocodeSkinOrderScene = new Scenes.BaseScene<MyContext>(enterPromocodeSkinOrderSceneId);
 
 const createOrder = async (ctx: MyContext): Promise<Order> => {
@@ -30,12 +30,19 @@ const createOrder = async (ctx: MyContext): Promise<Order> => {
 		throw new Error('DescriptionProduct name is undefined');
 	}
 
+	console.log(1111, orderData.chosenArtistName);
+
+	const artist = await artistService.getArtistByName(orderData.chosenArtistName);
+
+	console.log(334333, artist);
+
 	const createdOrder = await orderService.createOrder({
 		description: orderData.descriptionProduct,
 		customerId: user.id,
 		customerTuid: BigInt(ctx.from.id),
 		nameProduct: orderData.product,
-		promocode: ctx.text,
+		promocode: orderData.promocode,
+		artistId: artist.userId,
 	});
 
 	ctx.session.orderData = {
@@ -75,7 +82,7 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 		console.log(usege);
 
 		if (Object.keys(usege).length === 0) {
-			if (promocode.usedCount < promocode.maxUses!) {
+			if (promocode.usedCount < promocode.maxUses) {
 				if (promocode.discountType === DiscountType.fixed) {
 					ctx.session.orderData = {
 						...ctx.session.orderData,
@@ -140,6 +147,11 @@ enterPromocodeSkinOrderScene.on('callback_query', async (ctx) => {
 
 		if (parsed === promocodeButton.key) {
 			console.log(11111);
+			ctx.session.orderData = {
+				...ctx.session.orderData,
+				promocode: null,
+				promocodeName: null,
+			};
 			await createOrder(ctx);
 			await ctx.scene.enter(paymentSkinOrderSceneId);
 		} else if (parsed === backButton.key) {

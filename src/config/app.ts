@@ -14,4 +14,7 @@ export const appConfig = {
 	redisPassword: getEnv('REDIS_PASSWORD'),
 	redisPort: getEnv('REDIS_PORT'),
 	redisHost: getEnv('REDIS_HOST'),
+	yooKassaApiUrl: getEnv('YOOKASSA_API_URL'),
+	yooKassaUsername: getEnv('YOOKASSA_USERNAME'),
+	yooKassaPassword: getEnv('YOOKASSA_PASSWORD'),
 };

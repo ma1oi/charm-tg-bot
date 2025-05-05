@@ -25,7 +25,7 @@ getMyOrdersSceneArtist.enter(async (ctx) => {
 
 	const orders = await orderService.getAllActiveArtistOrders(artist.id);
 
-	let message = '';
+	let message = Object.values(orders).length === 0 ? 'У вас нет заказов' : '';
 
 	const keyboard: KeyboardButton[] = [];
 

@@ -1,7 +1,9 @@
 import { backButton } from '@constsants/buttons';
 import { allArtistsAdminSceneId } from '@scenes/admin/allArtistsScene';
+import { closeOrderAdminSceneId } from '@scenes/admin/closeOrderScene';
 import { heroSceneAdminId } from '@scenes/admin/heroScene';
 import { hireArtistAdminSceneId } from '@scenes/admin/hireScene';
+import { transferOrderToArtistAdminSceneId } from '@scenes/admin/transferOrderToArtistScene';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
@@ -46,6 +48,10 @@ artistsAdminScene.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(allArtistsAdminSceneId);
 		} else if (parsed === 'hireArtists') {
 			await ctx.scene.enter(hireArtistAdminSceneId);
+		} else if (parsed === 'transferOrderToArtist') {
+			await ctx.scene.enter(transferOrderToArtistAdminSceneId);
+		} else if (parsed === 'closeOrder') {
+			await ctx.scene.enter(closeOrderAdminSceneId);
 		}
 	}
 

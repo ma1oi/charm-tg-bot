@@ -6,6 +6,7 @@ type OrderData = {
 	promocode?: string;
 	promocodeName?: string;
 	orderId?: number;
+	chosenArtistName?: string;
 };
 
 export type CreatePromocodeState = {
@@ -14,6 +15,13 @@ export type CreatePromocodeState = {
 	discountValue?: number;
 	maxUses?: number | null;
 	usageLimit?: number;
+};
+
+export type HireArtistState = {
+	tuid: bigint;
+	name: string;
+	category: string;
+	imgUrl: string;
 };
 
 export type MySession = {
@@ -27,6 +35,7 @@ export type MyBaseContext = {
 
 export type MySessionWizard = MySession & {
 	createPromocodeState?: CreatePromocodeState;
+	hireArtistState?: HireArtistState;
 } & Scenes.WizardSessionData;
 
 export type MyContextWizard = MyBaseContext & {

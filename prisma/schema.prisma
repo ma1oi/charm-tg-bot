@@ -20,6 +20,26 @@ model User {
   payments         Payment[]
   promoUsages      PromocodeUsage[]
   ArtistQueue      ArtistQueue?
+  Artist           Artist?
+  ArtistCategory   ArtistCategory[]
+}
+
+model Artist {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  userId Int    @unique
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ArtistCategory {
+  id       Int    @id @default(autoincrement())
+  name     String
+  category String
+  userId   Int
+  imgUrl   String
+
+  User User? @relation(fields: [userId], references: [id])
 }
 
 model ArtistQueue {
@@ -58,22 +78,24 @@ model Message {
   fileUrl   String?
   createdAt DateTime @default(now())
 
-  order  Order @relation(fields: [orderId], references: [id])
-  sender User  @relation(fields: [senderId], references: [id])
+  order    Order @relation(fields: [orderId], references: [id])
+  sender   User  @relation(fields: [senderId], references: [id])
+  artistId Int?
 }
 
 model Payment {
   id            Int           @id @default(autoincrement())
-  orderId       Int
+  orderId       Int           @unique
   customerId    Int
   amount        Float
-  paymentLink   String?
+  paymentId     String
   paymentStatus PaymentStatus
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @default(now()) @updatedAt
 
   order    Order @relation(fields: [orderId], references: [id])
   customer User  @relation(fields: [customerId], references: [id])
+  artistId Int?
 }
 
 model Promocode {
@@ -98,6 +120,7 @@ model PromocodeUsage {
   promocode Promocode @relation(fields: [promocodeId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
   order     Order     @relation(fields: [orderId], references: [id])
+  artistId  Int?
 }
 
 enum Role {

@@ -5,7 +5,7 @@ export const products: Product[][] = [
 		{
 			id: 1,
 			name: 'Novice',
-			cost: 299,
+			cost: 1,
 			image:
 				'https://sun9-50.userapi.com/impg/7PF0e5ZmIt3XBqFEFtP3hO3y6lCZbvvkKVrsuw/-aEn5k6fbEw.jpg?size=750x496&quality=95&sign=7a2b1fdb7fc4f5c2670f0073c778b04f&type=album',
 		},

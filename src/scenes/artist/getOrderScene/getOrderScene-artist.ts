@@ -1,3 +1,4 @@
+import { backButton } from '@constsants/buttons';
 import { OrderStatus } from '@prisma/client';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
@@ -25,7 +26,7 @@ getOrderSceneArtist.enter(async (ctx) => {
 		return;
 	}
 
-	const order = await orderService.getPendingOrder();
+	const order = await orderService.getPendingOrder(artist.id);
 
 	let message = 'Произошла ошибка';
 
@@ -40,7 +41,7 @@ getOrderSceneArtist.enter(async (ctx) => {
 			message = `Новый заказ\nId заказа: #id_${order.id}\nОписание: ${order.description}`;
 
 			await ctx.editMessageText(message);
-			await ctx.scene.enter(getMyOrdersSceneArtistId);
+			await ctx.scene.enter(heroSceneArtistId);
 			return;
 		}
 	} else {

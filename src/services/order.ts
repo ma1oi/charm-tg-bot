@@ -7,6 +7,7 @@ type OrderInput = {
 	customerTuid: bigint;
 	nameProduct: string;
 	promocode?: string | null;
+	artistId: number;
 };
 
 export const orderService = {
@@ -30,16 +31,15 @@ export const orderService = {
 		const createdOrder = await prisma.order.create({
 			data: {
 				...order,
-				artistId: order.artistId || null,
 			},
 		});
 
 		return { ...createdOrder };
 	},
 
-	async getPendingOrder(): Promise<Order | null> {
+	async getPendingOrder(artistId: number): Promise<Order | null> {
 		const pendingOrder: Order | null = await prisma.order.findFirst({
-			where: { status: 'pending' },
+			where: { status: 'pending', artistId },
 		});
 
 		return pendingOrder ? { ...pendingOrder } : null;

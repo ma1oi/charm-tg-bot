@@ -1,5 +1,5 @@
 import { prisma } from '@config/database';
-import { Order, OrderStatus, Role, User } from '@prisma/client';
+import { Artist, ArtistCategory, OrderStatus, Role, User } from '@prisma/client';
 
 export const artistService = {
 	async addArtistToQueue(artistId: number) {
@@ -52,6 +52,36 @@ export const artistService = {
 		return prisma.user.update({
 			where: { tuid: artistTuid },
 			data: { role: role },
+		});
+	},
+
+	async createArtist(artist: Omit<Artist, 'id'>): Promise<Artist> {
+		return prisma.artist.create({
+			data: { ...artist },
+		});
+	},
+
+	async addArtistToCategory(artist: Omit<ArtistCategory, 'id'>): Promise<ArtistCategory> {
+		return prisma.artistCategory.create({
+			data: { ...artist },
+		});
+	},
+
+	async getArtistByName(name: string): Promise<Artist> {
+		return prisma.artist.findUnique({
+			where: { name },
+		});
+	},
+
+	async getArtistByUserId(userId: number): Promise<Artist> {
+		return prisma.artist.findUnique({
+			where: { userId },
+		});
+	},
+
+	async getArtistsByCategory(category: string): Promise<ArtistCategory[]> {
+		return prisma.artistCategory.findMany({
+			where: { category },
 		});
 	},
 };

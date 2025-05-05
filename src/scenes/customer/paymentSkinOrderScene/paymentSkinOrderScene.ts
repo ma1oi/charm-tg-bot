@@ -1,14 +1,17 @@
 import { bot } from '@bot';
 import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { products } from '@scenes/customer/choiceProductScene';
 import { enterPromocodeSkinOrderSceneId } from '@scenes/customer/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { startSceneId } from '@scenes/customer/startScene';
 import { artistService } from '@services/artist';
 import { orderService } from '@services/order';
+import { paymentService } from '@services/payment';
 import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
+import { yooKassaService } from '@services/yooKassa';
+import { BUTTON_TYPES } from '@types/keyboard';
 import { assertFrom } from '@utils/assertFrom';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
@@ -72,9 +75,28 @@ paymentSkinOrderScene.enter(async (ctx) => {
 		amount = Number(product?.cost);
 	}
 
-	// todo
-	await ctx.sendMessage(amount.toString() + ` (Скидка: ${amountMessage})`, {
-		reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
+	const yooPayment = await yooKassaService.createPayment(amount, orderData.product, orderData.orderId);
+
+	const user = await userService.getUserByTuid(ctx.from.id);
+
+	// todo переименовать paymentLink в paymentId
+
+	const payment = await paymentService.createPayment({
+		orderId: Number(orderData.orderId),
+		customerId: user.id,
+		amount: amount,
+		paymentId: yooPayment.id,
+		paymentStatus: PaymentStatus.pending,
+		createdAt: new Date(),
+	});
+
+	await ctx.sendMessage(`Оплатите ${amount.toString()}р в течение 10 минут (скидка: ${amountMessage})`, {
+		reply_markup: getMenuKeyboard([
+			{ type: BUTTON_TYPES.URL, url: yooPayment.confirmation.confirmation_url, label: 'оплатить' },
+			{ type: BUTTON_TYPES.SEPARATOR },
+			{ type: BUTTON_TYPES.CALLBACK, key: `paid_${orderData.orderId}`, label: 'оплатил' },
+			...config.keyboard,
+		]).reply_markup,
 	});
 });
 
@@ -88,50 +110,73 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
-		} else if (parsed === 'paid') {
+		} else if (parsed.split('_')[0] === 'paid') {
 			// todo обработка платежа\
 			// промокод todo УБРАТЬ !
 
-			const orderData = ctx.session.orderData;
+			const payment = await paymentService.getPaymentByOrderId(Number(parsed.split('_')[1]));
 
-			console.log(1111, orderData);
+			const yooPayment = await yooKassaService.getPayment(payment.paymentId);
 
-			const promocode = await promocodeService.getPromocodeByCode(orderData.promocodeName);
+			if (yooPayment.status === 'succeeded') {
+				const orderData = ctx.session.orderData;
 
-			if (promocode.usedCount + 1 === promocode.maxUses!) {
-				await promocodeService.updatePromocode({ id: promocode.id, expiresAt: new Date() });
-			}
+				await paymentService.updatePaymentByOrderId(orderData.orderId, {
+					paymentStatus: PaymentStatus.completed,
+					updatedAt: new Date(),
+				});
 
-			const user = await userService.getUserByTuid(BigInt(ctx.from.id));
+				console.log(1111, orderData);
 
-			await promocodeService.createPromocodeUsage({
-				promocodeId: promocode.id,
-				userId: user.id,
-				orderId: Number(orderData.orderId),
-			});
+				if (orderData.promocodeName) {
+					const promocode = await promocodeService.getPromocodeByCode(orderData.promocodeName);
 
-			await promocodeService.addUsePromocode(promocode.id);
+					if (promocode.usedCount + 1 === promocode.maxUses) {
+						await promocodeService.updatePromocode({ id: promocode.id, expiresAt: new Date() });
+					}
 
-			if (orderData?.orderId !== undefined) {
-				const deletedArtist = await artistService.assignOrderToNextArtist(orderData.orderId);
+					const user = await userService.getUserByTuid(BigInt(ctx.from.id));
 
-				console.log(deletedArtist);
-
-				if (deletedArtist) {
-					const artist = await userService.getUserById(deletedArtist.artistId);
-
-					await bot.telegram.sendMessage(Number(artist.tuid), `У тебя новый заказ!\n#id_${orderData.orderId}`);
-				} else {
-					const updatedOrder = await orderService.updateOrder({
-						id: orderData.orderId,
-						status: OrderStatus.pending,
+					await promocodeService.createPromocodeUsage({
+						promocodeId: promocode.id,
+						userId: user.id,
+						orderId: Number(orderData.orderId),
 					});
 
-					console.log(updatedOrder);
+					await promocodeService.addUsePromocode(promocode.id);
 				}
 
-				await ctx.editMessageText('создан новый заказ');
-				ctx.session.orderData = {};
+				if (orderData?.orderId !== undefined) {
+					const artistQueue = await artistService.assignOrderToNextArtist(orderData.orderId);
+
+					console.log(artistQueue);
+
+					if (artistQueue) {
+						const artist = await userService.getUserById(artistQueue.artistId);
+
+						await bot.telegram.sendMessage(Number(artist.tuid), `У тебя новый заказ!\n#id_${orderData.orderId}`);
+
+						await orderService.updateOrder({
+							id: Number(orderData.orderId),
+							status: OrderStatus.in_progress,
+						});
+					} else {
+						const updatedOrder = await orderService.updateOrder({
+							id: orderData.orderId,
+							status: OrderStatus.pending,
+						});
+
+						console.log(updatedOrder);
+					}
+
+					await ctx.editMessageText('создан новый заказ');
+					ctx.session.orderData = {};
+					await ctx.scene.enter(startSceneId);
+				}
+			} else if (yooPayment.status === 'pending') {
+				await ctx.reply('платеж не оплачен');
+			} else if (yooPayment.status === 'canceled ') {
+				await ctx.reply('платеж отменен');
 				await ctx.scene.enter(startSceneId);
 			}
 		}
