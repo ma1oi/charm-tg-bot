@@ -7,10 +7,7 @@ import { ScenesConfig } from '@/types/sceneConfig';
 const promocodesKeyboard = (promocodes: Promocode[], countPrev: number, countNext: number) => {
 	let promocodesKeyboardArray: KeyboardButton[] = [];
 
-	console.log(promocodes.length);
-
 	for (const promocode of promocodes.slice(countPrev, countNext)) {
-		console.log(promocode, 2222223555);
 		const row = [
 			{
 				type: BUTTON_TYPES.CALLBACK,
@@ -27,7 +24,6 @@ const promocodesKeyboard = (promocodes: Promocode[], countPrev: number, countNex
 	const newCountNext = countNext - pageSize;
 
 	if (promocodes.length > countNext) {
-		console.log('fghdsfggghfg');
 		if (countPrev === 0) {
 			promocodesKeyboardArray = [
 				...promocodesKeyboardArray,
@@ -51,7 +47,6 @@ const promocodesKeyboard = (promocodes: Promocode[], countPrev: number, countNex
 			];
 		}
 	} else if (promocodes.length < countNext) {
-		console.log('hgdshrsfhtfhest');
 		promocodesKeyboardArray = [
 			...promocodesKeyboardArray,
 			{ type: BUTTON_TYPES.SEPARATOR },

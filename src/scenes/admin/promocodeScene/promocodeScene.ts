@@ -35,7 +35,6 @@ promocodeAdminScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		}
 	}

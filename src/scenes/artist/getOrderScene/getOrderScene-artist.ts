@@ -19,7 +19,6 @@ getOrderSceneArtist.enter(async (ctx) => {
 
 	const orders = await orderService.getAllActiveArtistOrders(artist.id);
 
-	console.log(Object.values(orders).length);
 	if (Object.values(orders).length >= 5) {
 		await ctx.editMessageText('У вас есть 5 активных заказов');
 		await ctx.scene.enter(getMyOrdersSceneArtistId);
@@ -68,10 +67,7 @@ getOrderSceneArtist.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
 		const parsed = JSON.parse(key);
-
-		console.log(55553, parsed);
 	}
 
 	await ctx.answerCbQuery();

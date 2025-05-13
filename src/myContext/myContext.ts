@@ -3,10 +3,13 @@ import { Context as TelegrafContext, Scenes } from 'telegraf';
 type OrderData = {
 	product?: string;
 	descriptionProduct?: string;
-	promocode?: string;
-	promocodeName?: string;
+	promocode?: string | null;
+	promocodeName?: string | null;
 	orderId?: number;
 	chosenArtistName?: string;
+	amount?: number;
+	amountMessage?: string;
+	artistId?: number;
 };
 
 export type CreatePromocodeState = {

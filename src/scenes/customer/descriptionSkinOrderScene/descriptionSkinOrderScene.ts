@@ -3,6 +3,7 @@ import { MyContext } from '@myContext/myContext';
 import { enterPromocodeSkinOrderSceneId } from '@scenes/customer/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { messageSceneId } from '@scenes/customer/messageScene';
 import { orderProductSceneId } from '@scenes/customer/orderProductScene';
+import { startSceneId } from '@scenes/customer/startScene';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
@@ -16,21 +17,26 @@ descriptionSkinOrderScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
 
 	if (from === backButton.key) {
-		await ctx.sendMessage(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
+		await ctx.replyWithPhoto(config.image, {
+			caption: config.text,
+			reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
+		});
 	} else {
 		await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
 	}
 });
 
 descriptionSkinOrderScene.on('text', async (ctx) => {
-	console.log(111222, ctx.text);
+	if (ctx.message.text === '/start') {
+		await ctx.scene.enter(startSceneId);
+	} else {
+		ctx.session.orderData = {
+			...ctx.session.orderData,
+			descriptionProduct: ctx.message.text,
+		};
 
-	ctx.session.orderData = {
-		...ctx.session.orderData,
-		descriptionProduct: ctx.message.text,
-	};
-
-	await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
+		await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
+	}
 });
 
 descriptionSkinOrderScene.on('callback_query', async (ctx) => {
@@ -39,13 +45,10 @@ descriptionSkinOrderScene.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 		const parsed = JSON.parse(key);
-		console.log(parsed);
 
 		if (parsed === backButton.key) {
-			console.log(11111);
 			await ctx.scene.enter(orderProductSceneId);
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		}
 	}

@@ -35,12 +35,7 @@ artistsAdminScene.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
-
-		console.log(55554, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneAdminId, { from: backButton.key });

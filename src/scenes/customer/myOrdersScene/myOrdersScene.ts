@@ -19,8 +19,6 @@ myOrdersScene.enter(async (ctx) => {
 
 	const orders = await orderService.getAllUsersOrdersByTuid(ctx.from.id);
 
-	console.log(orders);
-
 	await ctx.editMessageCaption(myOrdersSceneConfig.text, {
 		reply_markup: getMenuKeyboard(myOrdersSceneConfigkeyboard(Object.values(orders), 0, 5).keyboard()).reply_markup,
 	});
@@ -32,7 +30,6 @@ myOrdersScene.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 		const parsed = JSON.parse(key);
-		console.log(parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(startSceneId, { from: backButton.key });
@@ -48,10 +45,8 @@ myOrdersScene.on('callback_query', async (ctx) => {
 				).reply_markup,
 			});
 		} else if (parsed.split('_')[0] === 'orderId') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(ordersSceneId, { orderId: Number(parsed.split('_')[1]) });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		}
 	}

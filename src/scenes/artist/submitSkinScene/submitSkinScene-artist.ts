@@ -32,18 +32,11 @@ submitSkinSceneArtist.on('document', async (ctx) => {
 		throw new Error('ctx.from not implemented');
 	}
 
-	console.log(ctx);
-
 	const order = await orderService.getOrderById(orderId_);
-
 	const doneOrder = await orderService.updateOrder({
 		id: order.id,
-		// status: OrderStatus.done,
 		skinFileUrl: ctx.message.document.file_id,
-		// completedAt: new Date(),
 	});
-
-	console.log(111, doneOrder);
 
 	await ctx.telegram.sendDocument(Number(order.customerTuid), ctx.message.document.file_id, {
 		caption: `Ваш скин по заказу #id_${orderId_}`,
@@ -69,12 +62,7 @@ submitSkinSceneArtist.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
-
-		console.log(55551, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });

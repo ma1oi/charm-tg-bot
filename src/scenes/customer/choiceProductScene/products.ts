@@ -11,19 +11,19 @@ export const products: Product[][] = [
 		},
 		{
 			id: 2,
-			name: 'Novice',
+			name: 'Paradise',
 			cost: 299,
 			image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 		},
 		{
 			id: 3,
-			name: 'Novice',
+			name: 'Fabulous',
 			cost: 299,
 			image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 		},
 		{
 			id: 4,
-			name: 'Novice',
+			name: 'Тотем',
 			cost: 299,
 			image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 		},
@@ -31,13 +31,13 @@ export const products: Product[][] = [
 	[
 		{
 			id: 5,
-			name: 'Тотем',
+			name: 'Анимированный тотем',
 			cost: 299,
 			image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 		},
 		{
 			id: 6,
-			name: 'Тотем2',
+			name: 'Плащи и элитры',
 			cost: 299,
 			image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 		},

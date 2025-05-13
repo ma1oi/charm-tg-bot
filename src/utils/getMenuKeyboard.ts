@@ -8,8 +8,6 @@ export const getMenuKeyboard = (keyboard: KeyboardButton[] | (() => KeyboardButt
 	const rows: ReturnType<typeof Markup.button.callback | typeof Markup.button.url>[][] = [];
 	let currentRow: (typeof rows)[number] = [];
 
-	// console.log(keyboard, 444444);
-
 	for (const item of actualKeyboard) {
 		if (item.type === BUTTON_TYPES.SEPARATOR) {
 			if (currentRow.length) {
@@ -26,8 +24,6 @@ export const getMenuKeyboard = (keyboard: KeyboardButton[] | (() => KeyboardButt
 	if (currentRow.length) {
 		rows.push(currentRow);
 	}
-
-	// console.log(rows);
 
 	return Markup.inlineKeyboard(rows);
 };

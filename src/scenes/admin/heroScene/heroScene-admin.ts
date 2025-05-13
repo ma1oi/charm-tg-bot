@@ -43,15 +43,11 @@ heroSceneAdmin.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
 		const parsed = JSON.parse(key);
-
-		// console.log(5555599, parsed);
 
 		if (parsed === 'createPromocode') {
 			await ctx.scene.enter(createPromocodeSceneAdminId);
 		} else if (parsed === promocodesAdminSceneId) {
-			console.log(1231);
 			await ctx.scene.enter(promocodesAdminSceneId);
 		} else if (parsed === 'artists') {
 			await ctx.scene.enter(artistsAdminSceneId);

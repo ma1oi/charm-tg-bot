@@ -29,6 +29,6 @@ const productKeyboard = () => {
 export const choiceProductSceneConfig: ScenesConfig = {
 	sceneId: 'choiceProduct',
 	text: 'choiceProduct',
-	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
+	image: 'https://i.postimg.cc/WbCYGSsV/start-Customer-Scene.png',
 	keyboard: () => productKeyboard(),
 };

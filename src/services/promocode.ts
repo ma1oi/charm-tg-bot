@@ -50,7 +50,7 @@ export const promocodeService = {
 		return promocode;
 	},
 
-	async createPromocodeUsage(promocode: Omit<PromocodeUsage, 'id' | 'usedAt'>): Promise<Promocode> {
+	async createPromocodeUsage(promocode: Omit<PromocodeUsage, 'id' | 'artistId'>): Promise<Promocode> {
 		return prisma.promocodeUsage.create({
 			data: { ...promocode },
 		});

@@ -37,14 +37,13 @@ export const yooKassaService = {
 		});
 
 		const data = await response.json();
-		console.log(data);
 
 		return data;
 	},
 
 	async getPayment(yooId: string): Promise<yooPayment> {
-		const username = 1069979;
-		const password = 'live_gE3vsKenED_VRGGvnLHutq6p9FLYzwYNLMTcu7LsNvE';
+		const username = appConfig.yooKassaUsername;
+		const password = appConfig.yooKassaPassword;
 		const auth = Buffer.from(`${username}:${password}`).toString('base64');
 
 		const response = await fetch(appConfig.yooKassaApiUrl + 'payments/' + yooId, {
@@ -52,12 +51,10 @@ export const yooKassaService = {
 			headers: {
 				Authorization: `Basic ${auth}`,
 				'Content-Type': 'application/json',
-				// другие хидеры, если нужны
 			},
 		});
 
 		const data = await response.json();
-		console.log(data);
 
 		return data;
 	},

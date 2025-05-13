@@ -11,12 +11,13 @@ import { paymentService } from '@services/payment';
 import { promocodeService } from '@services/promocode';
 import { userService } from '@services/user';
 import { yooKassaService } from '@services/yooKassa';
-import { BUTTON_TYPES } from '@types/keyboard';
 import { assertFrom } from '@utils/assertFrom';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { paymentSkinOrderSceneConfig as config } from './paymentSkinOrderSceneConfig';
+
+import { BUTTON_TYPES } from '@/types/keyboard';
 
 export const paymentSkinOrderSceneId = config.sceneId;
 
@@ -40,10 +41,7 @@ paymentSkinOrderScene.enter(async (ctx) => {
 	};
 
 	const productId = Number(ctx.session.orderData?.product?.split('_')[1]);
-
 	const product = findProductById(productId);
-
-	console.log(111, orderData.promocode);
 
 	if (orderData.promocode) {
 		const applyDiscount = (price: number, promocode?: string): number => {
@@ -64,7 +62,7 @@ paymentSkinOrderScene.enter(async (ctx) => {
 				const fixed = parseFloat(promocode);
 				if (isNaN(fixed)) return price;
 
-				amountMessage = `${fixed}р`;
+				amountMessage = `${fixed}₽`;
 
 				return Math.max(0, price - fixed); // Не уходим в минус
 			}
@@ -81,23 +79,46 @@ paymentSkinOrderScene.enter(async (ctx) => {
 
 	// todo переименовать paymentLink в paymentId
 
-	const payment = await paymentService.createPayment({
+	await paymentService.createPayment({
 		orderId: Number(orderData.orderId),
 		customerId: user.id,
 		amount: amount,
 		paymentId: yooPayment.id,
 		paymentStatus: PaymentStatus.pending,
 		createdAt: new Date(),
+		artistId: Number(orderData.artistId),
 	});
 
-	await ctx.sendMessage(`Оплатите ${amount.toString()}р в течение 10 минут (скидка: ${amountMessage})`, {
-		reply_markup: getMenuKeyboard([
-			{ type: BUTTON_TYPES.URL, url: yooPayment.confirmation.confirmation_url, label: 'оплатить' },
-			{ type: BUTTON_TYPES.SEPARATOR },
-			{ type: BUTTON_TYPES.CALLBACK, key: `paid_${orderData.orderId}`, label: 'оплатил' },
-			...config.keyboard,
-		]).reply_markup,
-	});
+	orderData.amount = Number(amount);
+	orderData.amountMessage = amountMessage;
+
+	if (orderData.promocode) {
+		await ctx.sendMessage(
+			`Оплатите счёт по кнопке ниже и нажмите "Проверить платёж". Цена: ${amount} (скидка: ${amountMessage})`,
+			{
+				reply_markup: getMenuKeyboard([
+					{ type: BUTTON_TYPES.URL, url: yooPayment.confirmation.confirmation_url, label: 'Оплатить' },
+					{ type: BUTTON_TYPES.SEPARATOR },
+					{ type: BUTTON_TYPES.CALLBACK, key: `paid_${orderData.orderId}`, label: 'Проверить платёж' },
+					{ type: BUTTON_TYPES.SEPARATOR },
+					...config.keyboard,
+				]).reply_markup,
+			}
+		);
+	} else {
+		await ctx.editMessageText(
+			`Оплатите счёт по кнопке ниже и нажмите "Проверить платёж". Цена: ${amount}₽ (скидка: ${amountMessage}₽)`,
+			{
+				reply_markup: getMenuKeyboard([
+					{ type: BUTTON_TYPES.URL, url: yooPayment.confirmation.confirmation_url, label: 'Оплатить' },
+					{ type: BUTTON_TYPES.SEPARATOR },
+					{ type: BUTTON_TYPES.CALLBACK, key: `paid_${orderData.orderId}`, label: 'Проверить платёж' },
+					{ type: BUTTON_TYPES.SEPARATOR },
+					...config.keyboard,
+				]).reply_markup,
+			}
+		);
+	}
 });
 
 paymentSkinOrderScene.on('callback_query', async (ctx) => {
@@ -106,10 +127,12 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 		const parsed = JSON.parse(key);
-		console.log(parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
+		} else if (parsed === 'cancel') {
+			await ctx.editMessageText('Платеж отменен');
+			await ctx.scene.enter(startSceneId);
 		} else if (parsed.split('_')[0] === 'paid') {
 			// todo обработка платежа\
 			// промокод todo УБРАТЬ !
@@ -126,8 +149,6 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 					updatedAt: new Date(),
 				});
 
-				console.log(1111, orderData);
-
 				if (orderData.promocodeName) {
 					const promocode = await promocodeService.getPromocodeByCode(orderData.promocodeName);
 
@@ -141,6 +162,7 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 						promocodeId: promocode.id,
 						userId: user.id,
 						orderId: Number(orderData.orderId),
+						usedAt: new Date(),
 					});
 
 					await promocodeService.addUsePromocode(promocode.id);
@@ -148,8 +170,6 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 
 				if (orderData?.orderId !== undefined) {
 					const artistQueue = await artistService.assignOrderToNextArtist(orderData.orderId);
-
-					console.log(artistQueue);
 
 					if (artistQueue) {
 						const artist = await userService.getUserById(artistQueue.artistId);
@@ -165,8 +185,6 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 							id: orderData.orderId,
 							status: OrderStatus.pending,
 						});
-
-						console.log(updatedOrder);
 					}
 
 					await ctx.editMessageText('создан новый заказ');
@@ -174,9 +192,21 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 					await ctx.scene.enter(startSceneId);
 				}
 			} else if (yooPayment.status === 'pending') {
-				await ctx.reply('платеж не оплачен');
+				const orderData = ctx.session.orderData;
+
+				await ctx.sendMessage(
+					`Оплатите счёт по кнопке ниже и нажмите "Проверить платёж". Цена: ${orderData.amount} (скидка: ${orderData.amountMessage})`,
+					{
+						reply_markup: getMenuKeyboard([
+							{ type: BUTTON_TYPES.URL, url: yooPayment.confirmation.confirmation_url, label: 'Оплатить' },
+							{ type: BUTTON_TYPES.SEPARATOR },
+							{ type: BUTTON_TYPES.CALLBACK, key: `paid_${orderData.orderId}`, label: 'Проверить платёж' },
+							...config.keyboard,
+						]).reply_markup,
+					}
+				);
 			} else if (yooPayment.status === 'canceled ') {
-				await ctx.reply('платеж отменен');
+				await ctx.reply('Платёж отменен');
 				await ctx.scene.enter(startSceneId);
 			}
 		}

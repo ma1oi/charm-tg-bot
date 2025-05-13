@@ -32,6 +32,13 @@ model Artist {
   user User @relation(fields: [userId], references: [id])
 }
 
+model CategoryProdict {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  imgUrl      String
+}
+
 model ArtistCategory {
   id       Int    @id @default(autoincrement())
   name     String

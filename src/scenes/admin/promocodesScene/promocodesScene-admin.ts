@@ -34,7 +34,6 @@ promocodesSceneAdmin.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 		const parsed = JSON.parse(key);
-		console.log(parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneAdminId, { from: backButton.key });

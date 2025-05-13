@@ -5,7 +5,7 @@ export const backButton = {
 
 export const promocodeButton = {
 	key: 'notPromocode',
-	label: 'нет промокода',
+	label: 'Нет промокода',
 };
 
 export const supportButton = {

@@ -5,7 +5,9 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const descriptionSkinOrderSceneConfig: ScenesConfig = {
 	sceneId: 'descriptionSkinOrder',
-	text: 'описание скина',
-	// image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
+	text:
+		'Опишите как должен выглядить ваш скин и по желанию приложите несколько файлов для художника.\n' +
+		'Учтите, что нужно приложить фотографии в виде файла. Ниже показано как это сделать.',
+	image: 'https://i.postimg.cc/d390rn7j/description-Order.png',
 	keyboard: [{ type: BUTTON_TYPES.CALLBACK, key: backButton.key, label: backButton.label }],
 };

@@ -23,6 +23,7 @@ import { enterPromocodeSkinOrderScene } from '@scenes/customer/enterPromocodeSki
 import { messageScene, messageSceneId } from '@scenes/customer/messageScene/messageScene';
 import { myOrdersScene } from '@scenes/customer/myOrdersScene/';
 import { paymentSkinOrderScene } from '@scenes/customer/paymentSkinOrderScene/';
+import { productDescriptionScene } from '@scenes/customer/productDescriptionScene/productDescriptionScene';
 import { orderService } from '@services/order';
 import { artistsAdminScene } from 'src/scenes/admin/artistsScene';
 import { descriptionSkinOrderScene } from 'src/scenes/customer/descriptionSkinOrderScene';
@@ -43,6 +44,7 @@ const stage = new Scenes.Stage<MyContextWizard>([
 	messageScene,
 	myOrdersScene,
 	orderScene,
+	productDescriptionScene,
 
 	heroSceneArtist,
 	getOrderSceneArtist,
@@ -64,9 +66,9 @@ const stage = new Scenes.Stage<MyContextWizard>([
 ]);
 
 // @ts-ignore
-bot.use(session<MySessionWizard>({ defaultSession: () => ({}) }));
+// bot.use(session<MySessionWizard>({ defaultSession: () => ({}) }));
 
-// bot.use(session<MySessionWizard>({ store: redisStore, defaultSession: () => ({}) }));
+bot.use(session<MySessionWizard>({ store: redisStore, defaultSession: () => ({}) }));
 
 bot.use(stage.middleware());
 bot.use(upsertUserMiddleware);
@@ -89,7 +91,6 @@ bot.on('callback_query', async (ctx) => {
 	const key = JSON.parse(ctx.callbackQuery.data);
 
 	if (key.split('_')[0] === 'replyMessage') {
-		console.log(ctx.scene.current?.id, 'ctx.scene.current?.id');
 		await ctx.answerCbQuery();
 		await ctx.scene.enter(messageSceneId, {
 			orderId: Number(key.split('_')[1]),
@@ -105,8 +106,6 @@ bot.on('callback_query', async (ctx) => {
 			status: OrderStatus.done,
 			completedAt: new Date(),
 		});
-
-		console.log(updateOrder, 'updateOrder');
 
 		await ctx.reply('Спасибо за заказ!');
 

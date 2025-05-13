@@ -43,20 +43,13 @@ startScene.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
 
-		console.log(55556, parsed);
-
 		if (parsed === choiceProductSceneId) {
-			console.log(1123312);
 			await ctx.scene.enter(choiceProductSceneId);
 		} else if (parsed === myOrdersSceneConfig.sceneId) {
 			await ctx.scene.enter(myOrdersSceneId);
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneArtistId, { key: parsed });
 		}
 	}

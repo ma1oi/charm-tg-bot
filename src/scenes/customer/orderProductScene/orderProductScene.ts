@@ -34,28 +34,41 @@ orderProductScene.enter(async (ctx) => {
 
 	const artists = await artistService.getArtistsByCategory(orderData?.product?.split('_')[0].toLowerCase());
 
-	console.log(555, Object.values(artists), orderData?.product?.split('_')[0].toLowerCase());
-	artists.map((a) => {
-		console.log(45, a);
-	});
-
 	if (product !== null) {
 		const mediaGroup = artists.map((artist, i) => ({
 			type: 'photo',
 			media: artist.imgUrl,
-			caption: i === 0 ? product.name : undefined,
+			caption: i === 0 ? 'Категория: ' + product.name : undefined,
 		}));
+
+		if (mediaGroup.length === 1) {
+			await ctx.replyWithPhoto(mediaGroup[0].media);
+			return;
+		}
 
 		await ctx.replyWithMediaGroup(mediaGroup);
 
-		await ctx.reply('выбери художника', {
-			reply_markup: getMenuKeyboard(
-				artists.map((artist, i) => ({
+		if (artists.length === 0) {
+			await ctx.reply('На данный момент нет доступных художников.');
+			return;
+		}
+
+		await ctx.reply('Выберите художника', {
+			reply_markup: getMenuKeyboard([
+				...artists.map((artist) => ({
 					type: BUTTON_TYPES.CALLBACK,
-					key: `artist_${artist.name}`,
+					key: `artist_${encodeURIComponent(artist.name)}`,
 					label: artist.name,
-				}))
-			).reply_markup,
+				})),
+				{
+					type: BUTTON_TYPES.SEPARATOR,
+				},
+				{
+					type: BUTTON_TYPES.CALLBACK,
+					key: backButton.key,
+					label: backButton.label,
+				},
+			]).reply_markup,
 		});
 	}
 });
@@ -66,21 +79,26 @@ orderProductScene.on('callback_query', async (ctx) => {
 	if ('data' in callback) {
 		const key = callback.data;
 		const parsed = JSON.parse(key);
-		console.log(parsed);
 
 		if (parsed === backButton.key) {
-			console.log(11111);
-			await ctx.scene.enter(choiceProductSceneId);
+			await ctx.deleteMessage();
+			await ctx.scene.enter(choiceProductSceneId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			console.log(9898, parsed);
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		} else if (parsed.split('_')[0] === 'artist') {
-			console.log(9898, parsed);
+			const arist = artistService.getArtistByName(parsed.split('_')[1]);
+
+			if (Object.keys(arist).length === 0) {
+				await ctx.answerCbQuery('Художник недоступен. Произошла ошибка. Попробуйте выбрать другого художника');
+				return;
+			}
 
 			ctx.session.orderData = {
 				...ctx.session.orderData,
 				chosenArtistName: parsed.split('_')[1],
 			};
+
+			await ctx.editMessageText(`Вы выбрали художника ${parsed.split('_')[1]}`);
 
 			await ctx.scene.enter(descriptionSkinOrderSceneId, { from: backButton.key });
 		}

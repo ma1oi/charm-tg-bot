@@ -17,12 +17,10 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 	async (ctx) => {
 		if (!ctx.message || !('text' in ctx.message)) {
 			await ctx.reply('Пожалуйста, введите название промокода текстом.');
-			return; // Остаемся на этом же шаге
+			return;
 		}
 
 		const promocode = await promocodeService.getPromocodeByCode(ctx.message.text);
-
-		console.log(promocode);
 
 		if (Object.keys(promocode).length === 0) {
 			(ctx.wizard.state as CreatePromocodeState).code = ctx.message.text;
@@ -106,9 +104,6 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 			});
 
 			await ctx.reply(`создан промокод \`${promocode.code}\``, { parse_mode: 'MarkdownV2' });
-			console.log(promocode);
-
-			console.log(ctx.wizard.state);
 		} catch (error) {
 			console.error('Failed to create promocode:', error);
 			await ctx.reply('Не удалось создать промокод. Проверьте консоль сервера для деталей.');

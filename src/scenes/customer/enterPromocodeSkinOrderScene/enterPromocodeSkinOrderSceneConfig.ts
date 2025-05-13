@@ -5,7 +5,7 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const enterPromocodeSkinOrderSceneConfig: ScenesConfig = {
 	sceneId: 'enterPromocedeSkinOrder',
-	text: 'промокод',
+	text: 'Если у вас есть промокод на скидку вы можете его использовать',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 	keyboard: [
 		{ type: BUTTON_TYPES.CALLBACK, key: promocodeButton.key, label: promocodeButton.label },

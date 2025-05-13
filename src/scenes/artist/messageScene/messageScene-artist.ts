@@ -23,8 +23,6 @@ messageSceneArtist.enter(async (ctx) => {
 
 	const { orderId, key } = ctx.scene.state as { orderId: number; key: string };
 
-	console.log(',customerId.', 'orderId', ctx.scene.state, orderId, key);
-
 	orderId_ = orderId;
 
 	orderId_ ??= Number(key.split('_')[1]);
@@ -32,8 +30,6 @@ messageSceneArtist.enter(async (ctx) => {
 	const order = await orderService.getOrderById(orderId_);
 
 	customerId_ = order.customerTuid;
-
-	console.log('customerId', customerId_);
 
 	if (orderId === undefined) {
 		await ctx.sendMessage('отправь сообщение заказчику', {
@@ -59,8 +55,6 @@ messageSceneArtist.on('text', async (ctx) => {
 		senderId: artist.id,
 	});
 
-	console.log(createdMessage);
-
 	await bot.telegram.sendMessage(Number(customerId_), ctx.text, {
 		reply_markup: getMenuKeyboard([
 			{ type: 'callback', key: `replyMessage_${orderId_}`, label: 'Ответить на сообщение' },
@@ -77,12 +71,7 @@ messageSceneArtist.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
-
-		console.log(55551, parsed);
 
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(heroSceneArtistId, { from: backButton.key });

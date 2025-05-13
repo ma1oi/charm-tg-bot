@@ -28,16 +28,10 @@ messageScene.enter(async (ctx) => {
 	orderId_ = orderId;
 	fromScene_ = fromScene;
 
-	console.log('orderId', orderId, typeof orderId_ === 'number');
-
 	if (typeof orderId_ !== 'number') {
 		const { key } = ctx.scene.state as { key: string };
-		console.log('key1', key.split('_'));
-
 		orderId_ = Number(key.split('_')[1]);
 	}
-
-	console.log('orderId777', orderId_);
 
 	const order = await orderService.getOrderById(orderId_);
 
@@ -67,8 +61,6 @@ messageScene.on('text', async (ctx) => {
 		senderId: customer.id,
 	});
 
-	console.log(createdMessage);
-
 	await bot.telegram.sendMessage(Number(artistTuid_), ctx.text, {
 		reply_markup: getMenuKeyboard([{ type: 'callback', key: 'replyMessage_4', label: 'Ответить на сообщение' }])
 			.reply_markup,
@@ -84,15 +76,9 @@ messageScene.on('callback_query', async (ctx) => {
 
 	if ('data' in callback) {
 		const key = callback.data;
-
-		console.log(key);
-
 		const parsed = JSON.parse(key);
 
-		console.log(55555, parsed);
-
 		if (parsed === backButton.key) {
-			console.log(fromScene_, 1111);
 			await ctx.scene.enter(fromScene_, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
 			// todo split по key replyMessage_id

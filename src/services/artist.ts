@@ -1,5 +1,5 @@
 import { prisma } from '@config/database';
-import { Artist, ArtistCategory, OrderStatus, Role, User } from '@prisma/client';
+import { Artist, ArtistCategory, CategoryProdict, OrderStatus, Role, User } from '@prisma/client';
 
 export const artistService = {
 	async addArtistToQueue(artistId: number) {
@@ -82,6 +82,12 @@ export const artistService = {
 	async getArtistsByCategory(category: string): Promise<ArtistCategory[]> {
 		return prisma.artistCategory.findMany({
 			where: { category },
+		});
+	},
+
+	async getCategoryByName(name: string): Promise<CategoryProdict> {
+		return prisma.categoryProdict.findUnique({
+			where: { name },
 		});
 	},
 };
