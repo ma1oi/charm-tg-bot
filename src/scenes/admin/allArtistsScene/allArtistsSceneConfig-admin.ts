@@ -37,12 +37,12 @@ const artistsKeyboard = (artists: User[], countPrev: number, countNext: number) 
 				{
 					type: BUTTON_TYPES.CALLBACK,
 					key: `prev_${newCountPrev}_${newCountNext}`,
-					label: 'предыдущее',
+					label: 'Предыдущее',
 				},
 				{
 					type: BUTTON_TYPES.CALLBACK,
 					key: `next_${countNext}_${countNext + pageSize}`,
-					label: 'дальше',
+					label: 'Дальше',
 				},
 			];
 		}
@@ -53,7 +53,7 @@ const artistsKeyboard = (artists: User[], countPrev: number, countNext: number) 
 			{
 				type: BUTTON_TYPES.CALLBACK,
 				key: `prev_${newCountPrev}_${newCountNext}`,
-				label: 'предыдущее',
+				label: 'Предыдущее',
 			},
 		];
 	}
@@ -68,8 +68,8 @@ const artistsKeyboard = (artists: User[], countPrev: number, countNext: number) 
 };
 
 export const allArtistsSceneConfigAdmin: ScenesConfig = {
-	sceneId: 'getPromocodesSceneAdmin',
-	text: 'художники список',
+	sceneId: 'allArtists',
+	text: 'Список всех художников',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 	keyboard: [],
 };

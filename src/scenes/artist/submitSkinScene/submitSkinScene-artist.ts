@@ -22,12 +22,12 @@ submitSkinSceneArtist.enter(async (ctx) => {
 
 	orderId_ = orderId;
 
-	await ctx.editMessageText('отправь файл скина не в сжатом виде. После этого заказ будет закрыт с вашей стороны', {
+	await ctx.editMessageText('Отправьте файл скина не в сжатом виде. После этого заказ будет закрыт с вашей стороны', {
 		reply_markup: getMenuKeyboard([{ type: 'callback', key: backButton.key, label: backButton.label }]).reply_markup,
 	});
 });
 
-submitSkinSceneArtist.on('document', async (ctx) => {
+submitSkinSceneArtist.on('photo', async (ctx) => {
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
@@ -35,10 +35,10 @@ submitSkinSceneArtist.on('document', async (ctx) => {
 	const order = await orderService.getOrderById(orderId_);
 	const doneOrder = await orderService.updateOrder({
 		id: order.id,
-		skinFileUrl: ctx.message.document.file_id,
+		skinFileUrl: ctx.message.photo[0].file_id,
 	});
 
-	await ctx.telegram.sendDocument(Number(order.customerTuid), ctx.message.document.file_id, {
+	await ctx.telegram.sendPhoto(Number(order.customerTuid), ctx.message.photo[0].file_id, {
 		caption: `Ваш скин по заказу #id_${orderId_}`,
 		reply_markup: getMenuKeyboard([
 			{ type: 'callback', key: `closeOrder_${orderId_}`, label: 'Закрыть заказ' },
@@ -46,13 +46,7 @@ submitSkinSceneArtist.on('document', async (ctx) => {
 		]).reply_markup,
 	});
 
-	await ctx.telegram.sendMessage(Number(order.customerTuid), startSceneConfig.text, {
-		reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
-	});
-
-	// todo статистика художника
-
-	await ctx.reply(`Поздравляем! Вы выполнили заказ #id_${orderId_}`);
+	await ctx.reply(`Поздравляем! Вы выполнили заказ #id_${orderId_}.\nОсталось дождаться подтверждения заказа от заказчика`);
 
 	await ctx.scene.enter(getMyOrdersSceneArtistId);
 });

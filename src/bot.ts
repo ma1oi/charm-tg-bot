@@ -1,8 +1,8 @@
 import { appConfig } from '@config/app';
 import { redisStore } from '@middlewares/redis';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
+import { errorHandler } from '@middlewares/errorHandler';
 import { MyContextWizard } from '@myContext/myContext';
-import { OrderStatus } from '@prisma/client';
 import { allArtistsSceneAdmin } from '@scenes/admin/allArtistsScene';
 import { artistAdminScene } from '@scenes/admin/artistScene';
 import { closeOrderAdminScene } from '@scenes/admin/closeOrderScene';
@@ -31,9 +31,11 @@ import { orderProductScene } from 'src/scenes/customer/orderProductScene';
 import { orderScene } from 'src/scenes/customer/orderScene';
 import { startScene, startSceneId } from 'src/scenes/customer/startScene';
 import { Scenes, session, Telegraf } from 'telegraf';
+import { closeOrderScene, closeOrderSceneId } from '@scenes/customer/closeOrderScene';
 
 export const bot = new Telegraf<MyContextWizard>(appConfig.botToken);
 
+// @ts-ignore
 const stage = new Scenes.Stage<MyContextWizard>([
 	startScene,
 	choiceProductScene,
@@ -45,6 +47,7 @@ const stage = new Scenes.Stage<MyContextWizard>([
 	myOrdersScene,
 	orderScene,
 	productDescriptionScene,
+	closeOrderScene,
 
 	heroSceneArtist,
 	getOrderSceneArtist,
@@ -70,10 +73,12 @@ const stage = new Scenes.Stage<MyContextWizard>([
 
 bot.use(session<MySessionWizard>({ store: redisStore, defaultSession: () => ({}) }));
 
-bot.use(stage.middleware());
+bot.use(errorHandler);
 bot.use(upsertUserMiddleware);
 
-bot.command('start', async (ctx) => {
+bot.use(stage.middleware());
+
+bot.command('/start', async (ctx) => {
 	await ctx.scene.enter(startSceneId);
 });
 
@@ -83,6 +88,10 @@ bot.command('artist', async (ctx) => {
 
 bot.command('admin', async (ctx) => {
 	await ctx.scene.enter(heroSceneAdminId);
+});
+
+bot.on('text', async (ctx) => {
+	await ctx.scene.enter(startSceneId);
 });
 
 bot.on('callback_query', async (ctx) => {
@@ -96,22 +105,11 @@ bot.on('callback_query', async (ctx) => {
 			orderId: Number(key.split('_')[1]),
 			fromScene: ctx.scene.current?.id,
 		});
-	} else if (key.split('_')[0] === 'closeOrder') {
-		// todo не работает
-
-		const order = Number(key.split('_')[1]);
-
-		const updateOrder = await orderService.updateOrder({
-			id: order,
-			status: OrderStatus.done,
-			completedAt: new Date(),
-		});
-
-		await ctx.reply('Спасибо за заказ!');
-
-		await ctx.scene.enter(startSceneId);
-		await ctx.answerCbQuery();
 	}
+	// else if (key.split('_')[0] === 'closeOrder') {
+	// 	await ctx.scene.enter(closeOrderSceneId, { key: key });
+	// 	await ctx.answerCbQuery();
+	// }
 });
 
 void (async () => {

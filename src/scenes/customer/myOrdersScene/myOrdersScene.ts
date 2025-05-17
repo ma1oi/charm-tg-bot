@@ -17,11 +17,19 @@ export const myOrdersScene = new Scenes.BaseScene<MyContext>(myOrdersSceneId);
 myOrdersScene.enter(async (ctx) => {
 	assertFrom(ctx);
 
+	const { from } = ctx.scene.state as { from: string };
+
 	const orders = await orderService.getAllUsersOrdersByTuid(ctx.from.id);
 
-	await ctx.editMessageCaption(myOrdersSceneConfig.text, {
-		reply_markup: getMenuKeyboard(myOrdersSceneConfigkeyboard(Object.values(orders), 0, 5).keyboard()).reply_markup,
-	});
+	if (from === backButton.key) {
+		await ctx.reply(myOrdersSceneConfig.text, {
+			reply_markup: getMenuKeyboard(myOrdersSceneConfigkeyboard(Object.values(orders).reverse(), 0, 5).keyboard()).reply_markup,
+		});
+	} else {
+		await ctx.editMessageCaption(myOrdersSceneConfig.text, {
+			reply_markup: getMenuKeyboard(myOrdersSceneConfigkeyboard(Object.values(orders).reverse(), 0, 5).keyboard()).reply_markup,
+		});
+	}
 });
 
 myOrdersScene.on('callback_query', async (ctx) => {
@@ -41,7 +49,7 @@ myOrdersScene.on('callback_query', async (ctx) => {
 
 			await ctx.editMessageCaption(myOrdersSceneConfig.text, {
 				reply_markup: getMenuKeyboard(
-					myOrdersSceneConfigkeyboard(Object.values(orders), countPrev, countNext).keyboard()
+					myOrdersSceneConfigkeyboard(Object.values(orders).reverse(), countPrev, countNext).keyboard()
 				).reply_markup,
 			});
 		} else if (parsed.split('_')[0] === 'orderId') {

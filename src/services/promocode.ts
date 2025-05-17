@@ -33,9 +33,6 @@ export const promocodeService = {
 			where: { code },
 		});
 
-		if (!promocode) {
-			throw new Error(`Promocode with code ${code} not found`);
-		}
 		return promocode;
 	},
 

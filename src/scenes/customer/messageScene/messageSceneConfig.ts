@@ -4,6 +4,6 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const messageSceneConfig: ScenesConfig = {
 	sceneId: 'messageArtist',
-	text: 'напиши сообщение художнику',
+	text: 'Напишите сообщение художнику',
 	keyboard: [{ type: 'callback', key: backButton.key, label: backButton.label }],
 };

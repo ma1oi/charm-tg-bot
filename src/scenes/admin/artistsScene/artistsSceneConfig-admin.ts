@@ -4,7 +4,7 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const artistsSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'artistsSceneId',
-	text: 'художники хиро',
+	text: 'Действия с художниками:',
 	keyboard: [
 		{ type: 'callback', key: 'allArtists', label: 'Список художников' },
 		{ type: 'separator' },

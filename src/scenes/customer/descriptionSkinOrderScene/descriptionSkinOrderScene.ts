@@ -17,10 +17,17 @@ descriptionSkinOrderScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
 
 	if (from === backButton.key) {
-		await ctx.replyWithPhoto(config.image, {
-			caption: config.text,
-			reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
-		});
+
+		if (config.image) {
+			await ctx.replyWithPhoto(config.image, {
+				caption: config.text,
+				reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
+			});
+		} else {
+			await ctx.reply(config.text, {
+				reply_markup: getMenuKeyboard(config.keyboard).reply_markup,
+			});
+		}
 	} else {
 		await ctx.editMessageCaption(config.text, { reply_markup: getMenuKeyboard(config.keyboard).reply_markup });
 	}

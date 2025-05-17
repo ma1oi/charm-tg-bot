@@ -17,24 +17,22 @@ startScene.enter(async (ctx) => {
 
 	const { from } = ctx.scene.state as { from: string };
 
-	// console.log(
-	// 	await promocodeService.createPromocode({
-	// 		code: 'test',
-	// 		discountType: 'fixed',
-	// 		discountValue: 100,
-	// 		maxUses: 1,
-	// 	})
-	// );
-
 	if (from === backButton.key) {
 		await ctx.editMessageCaption(startSceneConfig.text, {
 			reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
 		});
 	} else {
-		await ctx.replyWithPhoto(startSceneConfig.image, {
-			caption: startSceneConfig.text,
-			reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
-		});
+
+		if (startSceneConfig.image) {
+			await ctx.replyWithPhoto(startSceneConfig.image, {
+				caption: startSceneConfig.text,
+				reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
+			});
+		} else {
+			await ctx.reply(startSceneConfig.text, {
+				reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
+			});
+		}
 	}
 });
 

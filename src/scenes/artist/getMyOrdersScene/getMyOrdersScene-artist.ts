@@ -25,12 +25,12 @@ getMyOrdersSceneArtist.enter(async (ctx) => {
 
 	const orders = await orderService.getAllActiveArtistOrders(artist.id);
 
-	let message = Object.values(orders).length === 0 ? 'У вас нет заказов' : '';
+	let message = Object.values(orders).length === 0 ? 'У вас нет заказов' : 'Список ваших актиынх заказов:\n\n';
 
 	const keyboard: KeyboardButton[] = [];
 
 	Object.values(orders).forEach((order) => {
-		message = message + `Ордер id_${order.id}\n\n`;
+		message = message + `Заказ id_${order.id}\n\n`;
 		keyboard.push({ type: 'callback', key: `order_${order.id}`, label: `id_${order.id}` }, { type: 'separator' });
 	});
 

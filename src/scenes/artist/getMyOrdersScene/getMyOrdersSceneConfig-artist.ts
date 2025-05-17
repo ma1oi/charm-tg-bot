@@ -2,6 +2,6 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const getMyOrdersSceneConfigArtist: ScenesConfig = {
 	sceneId: 'getMyOrders',
-	text: 'ордер',
+	text: '',
 	keyboard: [{ type: 'callback', key: 'getOrder', label: 'заглушка' }],
 };

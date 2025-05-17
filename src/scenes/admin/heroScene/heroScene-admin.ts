@@ -27,12 +27,14 @@ heroSceneAdmin.enter(async (ctx) => {
 
 	const { from } = ctx.scene.state as { from: string };
 
+	const message = `Привет, ${ctx.from.first_name}\n\nМеню администратора:`
+
 	if (from === backButton.key) {
-		await ctx.editMessageText(heroSceneConfigAdmin.text, {
+		await ctx.editMessageText(message, {
 			reply_markup: getMenuKeyboard(heroSceneConfigAdmin.keyboard).reply_markup,
 		});
 	} else {
-		await ctx.reply(heroSceneConfigAdmin.text, {
+		await ctx.reply(message, {
 			reply_markup: getMenuKeyboard(heroSceneConfigAdmin.keyboard).reply_markup,
 		});
 	}
@@ -47,9 +49,10 @@ heroSceneAdmin.on('callback_query', async (ctx) => {
 
 		if (parsed === 'createPromocode') {
 			await ctx.scene.enter(createPromocodeSceneAdminId);
-		} else if (parsed === promocodesAdminSceneId) {
+		} else if (parsed === 'getPromocodes') {
 			await ctx.scene.enter(promocodesAdminSceneId);
-		} else if (parsed === 'artists') {
+		}
+		else if (parsed === 'artists') {
 			await ctx.scene.enter(artistsAdminSceneId);
 		}
 

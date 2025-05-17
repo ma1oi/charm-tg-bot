@@ -2,10 +2,10 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const heroSceneConfigArtist: ScenesConfig = {
 	sceneId: 'heroArtist',
-	text: 'хиро',
+	text: 'Меню художника:',
 	keyboard: [
-		{ type: 'callback', key: 'getNewOrder', label: 'получить новый заказ' },
+		{ type: 'callback', key: 'getNewOrder', label: 'Получить новый заказ' },
 		{ type: 'separator' },
-		{ type: 'callback', key: 'getMyOrders', label: 'мои заказы' },
+		{ type: 'callback', key: 'getMyOrders', label: 'Мои заказы' },
 	],
 };

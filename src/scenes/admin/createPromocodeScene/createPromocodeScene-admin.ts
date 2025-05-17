@@ -20,9 +20,14 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 			return;
 		}
 
+		if (ctx.message.text === '/start' || ctx.message.text === '/admin') {
+			await ctx.scene.enter(heroSceneAdminId)
+			return
+		}
+
 		const promocode = await promocodeService.getPromocodeByCode(ctx.message.text);
 
-		if (Object.keys(promocode).length === 0) {
+		if (promocode === null) {
 			(ctx.wizard.state as CreatePromocodeState).code = ctx.message.text;
 			await ctx.reply('Выберите тип скидки:', {
 				reply_markup: {
@@ -56,10 +61,21 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 		}
 		(ctx.wizard.state as CreatePromocodeState).discountType = ctx.callbackQuery.data as 'fixed' | 'percent';
 		await ctx.answerCbQuery();
-		await ctx.editMessageText('Введите значение скидки (число):');
+		await ctx.editMessageText(
+			`Тип скидки: ${ctx.callbackQuery.data === 'fixed' ? 'фиксированная' : 'процентная'}`
+		);
+		await ctx.reply('Введите значение скидки (число):');
 		return ctx.wizard.next();
 	},
 	async (ctx) => {
+
+		if (ctx.message || ('text' in ctx.message)) {
+			if (ctx.message.text === '/start' || ctx.message.text === '/admin') {
+				await ctx.scene.enter(heroSceneAdminId)
+				return
+			}
+		}
+
 		if (!ctx.message || !('text' in ctx.message) || isNaN(Number(ctx.message.text))) {
 			await ctx.reply('Пожалуйста, введите корректное число для значения скидки.');
 			return;
@@ -67,11 +83,11 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 		const discountValue = Number(ctx.message.text);
 		const state = ctx.wizard.state as CreatePromocodeState;
 		if (state.discountType === DiscountType.percent && (discountValue <= 0 || discountValue > 100)) {
-			await ctx.reply('Процентная скидка должна быть между 1 и 100.');
+			await ctx.reply('Процентная скидка должна быть между 1 и 100');
 			return;
 		}
 		if (state.discountType === DiscountType.fixed && discountValue <= 0) {
-			await ctx.reply('Фиксированная скидка должна быть больше 0.');
+			await ctx.reply('Фиксированная скидка должна быть больше 0');
 			return;
 		}
 
@@ -80,6 +96,14 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 		return ctx.wizard.next();
 	},
 	async (ctx) => {
+
+		if (ctx.message || ('text' in ctx.message)) {
+			if (ctx.message.text === '/start' || ctx.message.text === '/admin') {
+				await ctx.scene.enter(heroSceneAdminId)
+				return
+			}
+		}
+
 		if (!ctx.message || !('text' in ctx.message) || isNaN(Number(ctx.message.text)) || Number(ctx.message.text) < 0) {
 			await ctx.reply('Пожалуйста, введите корректное число (больше 0) для максимального количества активаций.');
 			return;
@@ -103,7 +127,7 @@ export const createPromocodeSceneAdmin = new Scenes.WizardScene<MyContextWizard>
 				maxUses: state.maxUses,
 			});
 
-			await ctx.reply(`создан промокод \`${promocode.code}\``, { parse_mode: 'MarkdownV2' });
+			await ctx.reply(`Создан промокод \`${promocode.code}\``, { parse_mode: 'MarkdownV2' });
 		} catch (error) {
 			console.error('Failed to create promocode:', error);
 			await ctx.reply('Не удалось создать промокод. Проверьте консоль сервера для деталей.');

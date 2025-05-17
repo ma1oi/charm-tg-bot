@@ -187,7 +187,7 @@ paymentSkinOrderScene.on('callback_query', async (ctx) => {
 						});
 					}
 
-					await ctx.editMessageText('создан новый заказ');
+					await ctx.editMessageText('Создан новый заказ');
 					ctx.session.orderData = {};
 					await ctx.scene.enter(startSceneId);
 				}

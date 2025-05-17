@@ -1,10 +1,6 @@
 import { bot } from '@bot';
 import { backButton } from '@constsants/buttons';
-import { allArtistsAdminSceneId } from '@scenes/admin/allArtistsScene';
-import { artistAdminSceneId } from '@scenes/admin/artistScene';
 import { artistsAdminSceneId } from '@scenes/admin/artistsScene';
-import { heroSceneAdminId } from '@scenes/admin/heroScene';
-import { hireArtistAdminSceneId } from '@scenes/admin/hireScene';
 import { orderService } from '@services/order';
 import { userService } from '@services/user';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
@@ -52,7 +48,7 @@ transferOrderToArtistAdminScene.on('callback_query', async (ctx) => {
 		const parsed = JSON.parse(key);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter(artistAdminSceneId, { from: backButton.key });
+			await ctx.scene.enter(artistsAdminSceneId);
 		}
 	}
 

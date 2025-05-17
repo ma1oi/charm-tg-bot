@@ -17,6 +17,8 @@ productDescriptionScene.enter(async (ctx) => {
 	const orderData = ctx.session.orderData;
 	const productName = orderData?.product?.split('_')[0];
 
+	console.log(productName, 1111);
+
 	const product = await artistService.getCategoryByName(productName);
 
 	await ctx.replyWithPhoto(product.imgUrl, {

@@ -45,7 +45,7 @@ promocodesSceneAdmin.on('callback_query', async (ctx) => {
 
 			await ctx.editMessageText(promocodesSceneConfigAdmin.text, {
 				reply_markup: getMenuKeyboard(
-					promocodesAdminSceneConfigkeyboard(Object.values(promocodes), countPrev, countNext).keyboard()
+					promocodesAdminSceneConfigkeyboard(Object.values(promocodes).reverse(), countPrev, countNext).keyboard()
 				).reply_markup,
 			});
 		} else if (parsed.split('_')[0] === 'promocodeId') {

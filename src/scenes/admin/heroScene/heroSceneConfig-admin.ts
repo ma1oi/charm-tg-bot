@@ -2,9 +2,9 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const heroSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'heroAdminScene',
-	text: 'хиро админ',
+	text: '',
 	keyboard: [
-		{ type: 'callback', key: 'CreatePromocode', label: 'Создать промокод' },
+		{ type: 'callback', key: 'createPromocode', label: 'Создать промокод' },
 		{ type: 'separator' },
 		{ type: 'callback', key: 'getPromocodes', label: 'Промокоды' },
 		{ type: 'separator' },

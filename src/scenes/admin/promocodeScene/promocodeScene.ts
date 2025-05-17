@@ -19,7 +19,12 @@ promocodeAdminScene.enter(async (ctx) => {
 
 	const promocode = await promocodeService.getPromocodeById(promocodeId);
 
-	const message = `промокод #id_${promocode.id}\nНазвание: ${promocode.code}\nТип: ${promocode.discountType}\nСкидка: ${promocode.discountValue}\nИспользований: ${promocode.usedCount}/${promocode.maxUses}\nЗакончен: ${promocode.expiresAt ?? 'не закончен'}`;
+	const promocodesTypes = {
+		'fixed': 'фиксированный',
+		'percent': 'процентная',
+	}
+
+	const message = `Промокод #id_${promocode.id}\nНазвание: ${promocode.code}\nТип: ${promocodesTypes[promocode.discountType]}\nСкидка: ${promocode.discountValue}\nИспользований: ${promocode.usedCount}/${promocode.maxUses}\nЗакончен: ${promocode.expiresAt ?? 'не закончен'}`;
 
 	await ctx.editMessageText(message);
 	await ctx.scene.enter(heroSceneAdminId);

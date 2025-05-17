@@ -69,7 +69,7 @@ const promocodesKeyboard = (promocodes: Promocode[], countPrev: number, countNex
 
 export const promocodesSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'getPromocodesSceneAdmin',
-	text: 'промокоды',
+	text: 'Список промокодов:',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 	keyboard: [],
 };

@@ -42,7 +42,7 @@ closeOrderAdminScene.on('callback_query', async (ctx) => {
 		const parsed = JSON.parse(key);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter(artistAdminSceneId, { from: backButton.key });
+			await ctx.scene.enter(artistsAdminSceneId);
 		}
 	}
 

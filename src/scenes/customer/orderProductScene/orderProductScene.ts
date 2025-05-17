@@ -86,7 +86,9 @@ orderProductScene.on('callback_query', async (ctx) => {
 		} else if (parsed.split('_')[0] === 'replyMessage') {
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		} else if (parsed.split('_')[0] === 'artist') {
-			const arist = artistService.getArtistByName(parsed.split('_')[1]);
+			const arist = await artistService.getArtistByName(parsed.split('_')[1]);
+
+			console.log(parsed.split('_')[1], 123132121312, arist);
 
 			if (Object.keys(arist).length === 0) {
 				await ctx.answerCbQuery('Художник недоступен. Произошла ошибка. Попробуйте выбрать другого художника');
