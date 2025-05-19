@@ -21,7 +21,7 @@ export type CreatePromocodeState = {
 };
 
 export type HireArtistState = {
-	tuid: bigint;
+	tuid: number;
 	name: string;
 	category: string;
 	imgUrl: string;

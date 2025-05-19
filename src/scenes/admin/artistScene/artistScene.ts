@@ -49,6 +49,9 @@ artistAdminScene.on('callback_query', async (ctx) => {
 			if (artist.tuid) {
 				const dismissedArtist = await artistService.dismissAndHireArtist(BigInt(artist.tuid), 'dismiss');
 
+				await artistService.deleteArtist(dismissedArtist.id)
+				await artistService.deleteArtistInArtistCategory(dismissedArtist.id)
+
 				await ctx.editMessageText(
 					`${dismissedArtist.name}, @${dismissedArtist.username}, id_${dismissedArtist.id} был снят с должности художника`
 				);

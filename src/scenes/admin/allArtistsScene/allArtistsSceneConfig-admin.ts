@@ -69,7 +69,7 @@ const artistsKeyboard = (artists: User[], countPrev: number, countNext: number) 
 
 export const allArtistsSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'allArtists',
-	text: 'Список всех художников',
+	text: 'Список всех художников:',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 	keyboard: [],
 };

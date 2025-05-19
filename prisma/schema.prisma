@@ -13,6 +13,7 @@ model User {
   username String
   name     String
   role     Role   @default(customer)
+  createdAt     DateTime      @default(now())
 
   ordersAsCustomer Order[]          @relation("CustomerOrders")
   ordersAsArtist   Order[]          @relation("ArtistOrders")
@@ -113,6 +114,7 @@ model Promocode {
   expiresAt     DateTime?
   maxUses       Int
   usedCount     Int          @default(0)
+  createdAt     DateTime      @default(now())
 
   usages PromocodeUsage[]
 }
@@ -123,11 +125,11 @@ model PromocodeUsage {
   userId      Int
   orderId     Int
   usedAt      DateTime @default(now())
+  createdAt     DateTime      @default(now())
 
   promocode Promocode @relation(fields: [promocodeId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
   order     Order     @relation(fields: [orderId], references: [id])
-  artistId  Int?
 }
 
 enum Role {

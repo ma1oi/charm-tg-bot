@@ -79,9 +79,21 @@ export const artistService = {
 		});
 	},
 
+	async deleteArtist(userId: number): Promise<Artist[]> {
+		return prisma.artist.delete({
+			where: { userId },
+		});
+	},
+
 	async getArtistsByCategory(category: string): Promise<ArtistCategory[]> {
 		return prisma.artistCategory.findMany({
 			where: { category },
+		});
+	},
+
+	async deleteArtistInArtistCategory(userId: number): Promise<ArtistCategory[]> {
+		return prisma.artistCategory.deleteMany({
+			where: { userId },
 		});
 	},
 

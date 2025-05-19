@@ -1,5 +1,5 @@
 import { CreatePromocodeState, HireArtistState, MyContextWizard } from '@myContext/myContext';
-import { DiscountType } from '@prisma/client';
+import { DiscountType, Role } from '@prisma/client';
 import { artistsAdminSceneId } from '@scenes/admin/artistsScene';
 import { heroSceneAdminId } from '@scenes/admin/heroScene';
 import { artistService } from '@services/artist';
@@ -8,45 +8,54 @@ import { userService } from '@services/user';
 import { Scenes } from 'telegraf';
 
 import { hireArtistSceneConfig } from './hireArtistSceneConfig';
+import { backButton } from '@constsants/buttons';
+import { prisma } from '@config/database';
 
 export const hireArtistAdminSceneId = hireArtistSceneConfig.sceneId;
 export const hireArtistAdminScene = new Scenes.WizardScene<MyContextWizard>(
 	hireArtistAdminSceneId,
 	async (ctx) => {
 		ctx.wizard.state = {};
-		await ctx.reply('введите тг айди художника');
+		await ctx.reply('Введите Телеграм ID художника');
 		return ctx.wizard.next();
 	},
 	async (ctx) => {
-		if (!ctx.message || !('text' in ctx.message)) {
-			await ctx.reply('Пожалуйста, тг айди текстом');
-			return; // Остаемся на этом же шаге
+		if (!ctx.message || !('text' in ctx.message) || !ctx.text) {
+			await ctx.reply('Введите Телеграм ID художника');
+			return;
 		}
 
-		const artist = (await artistService.getArtistByUserId(Number(ctx.text))) ?? {};
+		try {
+			BigInt(ctx.text)
+		} catch (e) {
+			await ctx.reply('Введите Телеграм ID художника');
+			return;
+		}
 
-		if (Object.keys(artist).length !== 0) {
-			await ctx.reply('чел уже художник');
-			await ctx.scene.enter(artistsAdminSceneId);
+		const artist = (await userService.getUserByTuid(BigInt(ctx.text))) ?? {};
+
+		if (Object.keys(artist).length !== 0 && artist.role === Role.artist) {
+			await ctx.reply('Этот человек уже художник');
+			await ctx.scene.enter(artistsAdminSceneId, { from: backButton.key });
 		} else {
 			const state = ctx.wizard.state as HireArtistState;
 
-			state.tuid = BigInt(ctx.text);
+			state.tuid = Number(ctx.text);
 
-			await ctx.reply('введите отображаемое имя художника без _!!!');
+			await ctx.reply('Введите отображаемое имя художника без нижнего подчеркивания');
 			return ctx.wizard.next();
 		}
 	},
 	async (ctx) => {
 		if (!ctx.message || !('text' in ctx.message)) {
-			await ctx.reply('введите нормальное отображаемое имя художника без _!!!');
+			await ctx.reply('Введите отображаемое имя художника без нижнего подчеркивания');
 			return;
 		}
 
 		const state = ctx.wizard.state as HireArtistState;
 
 		state.name = ctx.text.toString();
-		await ctx.reply('категория');
+		await ctx.reply('Введите категорию');
 		return ctx.wizard.next();
 	},
 	async (ctx) => {
@@ -57,13 +66,18 @@ export const hireArtistAdminScene = new Scenes.WizardScene<MyContextWizard>(
 
 		const state = ctx.wizard.state as HireArtistState;
 
+		const category = await artistService.getCategoryByName(ctx.text.toString())
+
+		if (category === null) {
+			await ctx.reply('Категория не найдена. Введите другую');
+			return;
+		}
+
 		state.category = ctx.text.toString();
 
-		await ctx.reply('юрл картинки');
+		await ctx.reply('Введите ссылку на картинку');
 		return ctx.wizard.next();
 
-		// await ctx.scene.enter(heroSceneAdminId);
-		// return ctx.scene.leave();
 	},
 	async (ctx) => {
 		if (!ctx.message || !('text' in ctx.message)) {
@@ -75,7 +89,12 @@ export const hireArtistAdminScene = new Scenes.WizardScene<MyContextWizard>(
 
 		state.imgUrl = ctx.text.toString();
 
-		const artist = await userService.getUserByTuid(state.tuid);
+		const artist = await userService.getUserByTuid(BigInt(state.tuid));
+
+		await prisma.user.update({
+			where: { tuid: artist.tuid },
+			data: { role: Role.artist },
+		});
 
 		const createdArtist = await artistService.createArtist({
 			name: state.name,
@@ -89,48 +108,9 @@ export const hireArtistAdminScene = new Scenes.WizardScene<MyContextWizard>(
 			imgUrl: state.imgUrl,
 		});
 
-		await ctx.reply('добавлен');
+		await ctx.reply(`Художник ${artist.username === '' ? '' : '@' + artist.username + ','} id_${artist.id} был добавлен в художники`);
 
-		// await ctx.scene.enter(heroSceneAdminId);
+		await ctx.scene.enter(artistsAdminSceneId, { from: backButton.key });
 		return ctx.scene.leave();
 	}
 );
-
-// export const hireArtistAdminScene = new Scenes.BaseScene<Scenes.SceneContext>(hireArtistAdminSceneId);
-//
-// hireArtistAdminScene.enter(async (ctx) => {
-// 	if (!ctx.from) {
-// 		throw new Error('ctx.from not implemented');
-// 	}
-//
-// 	await ctx.editMessageText(hireArtistSceneConfig.text, {
-// 		reply_markup: getMenuKeyboard(hireArtistSceneConfig.keyboard).reply_markup,
-// 	});
-// });
-//
-// hireArtistAdminScene.on('text', async (ctx) => {
-// 	const hidedActor = await artistService.dismissAndHireArtist(BigInt(ctx.text), 'hire');
-//
-// 	await ctx.sendMessage(`Художник @${hidedActor.username}, id_${hidedActor.id} был нанят`);
-// 	await ctx.scene.enter(artistsAdminSceneId, { from: backButton.key });
-// });
-//
-// hireArtistAdminScene.on('callback_query', async (ctx) => {
-// 	const callback = ctx.callbackQuery;
-//
-// 	if ('data' in callback) {
-// 		const key = callback.data;
-//
-// 		console.log(key);
-//
-// 		const parsed = JSON.parse(key);
-//
-// 		console.log(55554, parsed);
-//
-// 		if (parsed === backButton.key) {
-// 			await ctx.scene.enter(artistsAdminSceneId);
-// 		}
-// 	}
-//
-// 	await ctx.answerCbQuery();
-// });
