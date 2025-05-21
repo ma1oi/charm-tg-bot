@@ -30,7 +30,7 @@ closeOrderAdminScene.on('text', async (ctx) => {
 		completedAt: new Date(),
 	});
 
-	await ctx.reply(`Статус ордера id_${orderId} был изменен на ${editedOrder.status}`);
+	await ctx.reply(`Статус ордера id_${orderId} был изменен на "выполнен"`);
 	await ctx.scene.enter(artistsAdminSceneId, { from: backButton.key });
 });
 

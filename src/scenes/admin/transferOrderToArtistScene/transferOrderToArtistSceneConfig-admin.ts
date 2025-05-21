@@ -4,6 +4,6 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const transferOrderToArtistSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'transferOrderToArtistSceneId',
-	text: 'напиши айди заказа и тг айди художника кому передать',
+	text: 'Напишите id заказа и Телеграм id художника, которому нужно передать заказ',
 	keyboard: [{ type: 'callback', key: backButton.key, label: backButton.label }],
 };

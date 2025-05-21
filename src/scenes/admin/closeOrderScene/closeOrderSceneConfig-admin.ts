@@ -4,6 +4,6 @@ import { ScenesConfig } from '@/types/sceneConfig';
 
 export const closeOrderSceneConfigAdmin: ScenesConfig = {
 	sceneId: 'closeOrderScene',
-	text: 'напиши айди ордера который надо закрыть',
+	text: 'Напишите id ордера, который надо зыкрыть',
 	keyboard: [{ type: 'callback', key: backButton.key, label: backButton.label }],
 };
