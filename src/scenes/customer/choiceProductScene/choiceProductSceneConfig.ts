@@ -28,7 +28,7 @@ const productKeyboard = () => {
 
 export const choiceProductSceneConfig: ScenesConfig = {
 	sceneId: 'choiceProduct',
-	text: 'choiceProduct',
+	text: 'Выберите товар',
 	image: 'https://i.postimg.cc/WbCYGSsV/start-Customer-Scene.png',
 	keyboard: () => productKeyboard(),
 };

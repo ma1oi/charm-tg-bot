@@ -3,6 +3,7 @@ import { Context as TelegrafContext, Scenes } from 'telegraf';
 type OrderData = {
 	product?: string;
 	descriptionProduct?: string;
+	descriptionProductFile?: string;
 	promocode?: string | null;
 	promocodeName?: string | null;
 	orderId?: number;

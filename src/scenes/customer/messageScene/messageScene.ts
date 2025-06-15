@@ -19,6 +19,8 @@ let orderId_: number;
 let fromScene_: string;
 
 messageScene.enter(async (ctx) => {
+	console.log(9493493993933);
+
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
@@ -55,7 +57,7 @@ messageScene.on('text', async (ctx) => {
 
 	const customer = await userService.getUserByTuid(BigInt(ctx.from.id));
 
-	const createdMessage = await messageService.createMessage({
+	await messageService.createMessage({
 		orderId: orderId_,
 		content: ctx.text,
 		senderId: customer.id,
@@ -81,7 +83,6 @@ messageScene.on('callback_query', async (ctx) => {
 		if (parsed === backButton.key) {
 			await ctx.scene.enter(fromScene_, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			// todo split по key replyMessage_id
 			await ctx.scene.reenter();
 		}
 	}

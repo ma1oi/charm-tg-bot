@@ -26,7 +26,14 @@ orderSceneArtist.enter(async (ctx) => {
 
 	const message = `id_${order.id}\n\nОписание: ${order.description}`;
 
-	await ctx.editMessageText(message, { reply_markup: getMenuKeyboard(orderSceneConfigArtist.keyboard).reply_markup });
+	if (order.descriptionFileUrl) {
+		await ctx.replyWithPhoto(order.descriptionFileUrl, {
+			caption: message,
+			reply_markup: getMenuKeyboard(orderSceneConfigArtist.keyboard).reply_markup,
+		});
+	} else {
+		await ctx.reply(message, { reply_markup: getMenuKeyboard(orderSceneConfigArtist.keyboard).reply_markup });
+	}
 });
 
 orderSceneArtist.on('callback_query', async (ctx) => {
@@ -37,7 +44,7 @@ orderSceneArtist.on('callback_query', async (ctx) => {
 		const parsed = JSON.parse(key);
 
 		if (parsed === backButton.key) {
-			await ctx.scene.enter(getMyOrdersSceneArtistId, { from: backButton.key });
+			await ctx.scene.enter(getMyOrdersSceneArtistId);
 		} else if (parsed === 'messageCustomer') {
 			await ctx.scene.enter(messageSceneArtistId, { orderId: order_.id });
 		} else if (parsed === 'submitSkin') {

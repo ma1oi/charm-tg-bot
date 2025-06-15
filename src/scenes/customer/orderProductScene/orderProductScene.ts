@@ -16,8 +16,6 @@ export const orderProductSceneId = config.sceneId;
 export const orderProductScene = new Scenes.BaseScene<MyContext>(orderProductSceneId);
 
 orderProductScene.enter(async (ctx) => {
-	const { from } = ctx.scene.state as { from: string };
-
 	const orderData = ctx.session.orderData;
 
 	const findProductById = (id: number) => {
@@ -87,8 +85,6 @@ orderProductScene.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		} else if (parsed.split('_')[0] === 'artist') {
 			const arist = await artistService.getArtistByName(parsed.split('_')[1]);
-
-			console.log(parsed.split('_')[1], 123132121312, arist);
 
 			if (Object.keys(arist).length === 0) {
 				await ctx.answerCbQuery('Художник недоступен. Произошла ошибка. Попробуйте выбрать другого художника');

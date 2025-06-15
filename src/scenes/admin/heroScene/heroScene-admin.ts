@@ -27,7 +27,7 @@ heroSceneAdmin.enter(async (ctx) => {
 
 	const { from } = ctx.scene.state as { from: string };
 
-	const message = `Привет, ${ctx.from.first_name}\n\nМеню администратора:`
+	const message = `Привет, ${ctx.from.first_name}\n\nМеню администратора:`;
 
 	if (from === backButton.key) {
 		await ctx.editMessageText(message, {
@@ -51,15 +51,9 @@ heroSceneAdmin.on('callback_query', async (ctx) => {
 			await ctx.scene.enter(createPromocodeSceneAdminId);
 		} else if (parsed === 'getPromocodes') {
 			await ctx.scene.enter(promocodesAdminSceneId);
-		}
-		else if (parsed === 'artists') {
+		} else if (parsed === 'artists') {
 			await ctx.scene.enter(artistsAdminSceneId);
 		}
-
-		// if (parsed === choiceProductSceneId) {
-		// 	console.log(1123312);
-		// 	await ctx.scene.enter(choiceProductSceneId);
-		// }
 	}
 
 	await ctx.answerCbQuery();

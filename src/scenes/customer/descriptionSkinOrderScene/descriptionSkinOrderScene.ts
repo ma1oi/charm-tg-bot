@@ -17,7 +17,6 @@ descriptionSkinOrderScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
 
 	if (from === backButton.key) {
-
 		if (config.image) {
 			await ctx.replyWithPhoto(config.image, {
 				caption: config.text,
@@ -44,6 +43,20 @@ descriptionSkinOrderScene.on('text', async (ctx) => {
 
 		await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
 	}
+});
+
+descriptionSkinOrderScene.on('photo', async (ctx) => {
+	if (!ctx.from) {
+		throw new Error('ctx.from not implemented');
+	}
+
+	ctx.session.orderData = {
+		...ctx.session.orderData,
+		descriptionProduct: ctx.text,
+		descriptionProductFile: ctx.message.photo[0].file_id,
+	};
+
+	await ctx.scene.enter(enterPromocodeSkinOrderSceneId);
 });
 
 descriptionSkinOrderScene.on('callback_query', async (ctx) => {

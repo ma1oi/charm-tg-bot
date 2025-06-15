@@ -18,7 +18,6 @@ export const artistService = {
 		});
 
 		if (!nextArtist) {
-			// нет художников в очереди todo оповестить админа о том что нет художника
 			return;
 		}
 

@@ -31,8 +31,29 @@ export const yooKassaService = {
 					type: 'redirect',
 					return_url: 'https://t.me/charm_test_new_bot',
 				},
-				description: description,
-				test: true,
+				description: 'Charm',
+				receipt: {
+					customer: {
+						email: 'unknown@email.com',
+						phone: '+7999999999',
+					},
+					email: 'unknown@email.com',
+					items: [
+						{
+							amount: {
+								currency: 'RUB',
+								value: `${amount.toFixed(2)}`,
+							},
+							description: 'Charm',
+							payment_mode: 'full_payment',
+							payment_subject: 'service',
+							quantity: '1.0',
+							vat_code: 1,
+						},
+					],
+					phone: '+7999999999',
+				},
+				transfers: [],
 			}),
 		});
 

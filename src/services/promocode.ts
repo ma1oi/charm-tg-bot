@@ -41,9 +41,6 @@ export const promocodeService = {
 			where: { userId, promocodeId },
 		});
 
-		if (!promocode) {
-			throw new Error(`Promocode with userId ${userId} or with promocodeId ${promocodeId} not found`);
-		}
 		return promocode;
 	},
 

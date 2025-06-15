@@ -5,8 +5,6 @@ import { BUTTON_TYPES, KeyboardButton } from '@/types/keyboard';
 import { ScenesConfig } from '@/types/sceneConfig';
 
 const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) => {
-	// todo переписаать как в промокодах!!!!!!
-
 	let ordersKeyboardArray: KeyboardButton[] = [];
 
 	for (const order of orders.slice(countPrev, countNext)) {
@@ -14,7 +12,7 @@ const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) =
 			{
 				type: BUTTON_TYPES.CALLBACK,
 				key: 'orderId_' + order.id,
-				label: 'id_' + order.id,
+				label: 'Заказ ' + order.id,
 			},
 		];
 
@@ -30,7 +28,11 @@ const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) =
 			ordersKeyboardArray = [
 				...ordersKeyboardArray,
 				{ type: BUTTON_TYPES.SEPARATOR },
-				{ type: BUTTON_TYPES.CALLBACK, key: `next_${countPrev + countNext}_${countNext + countNext}`, label: 'дальше' },
+				{
+					type: BUTTON_TYPES.CALLBACK,
+					key: `next_${countPrev + countNext}_${countNext + countNext}`,
+					label: 'Следующие',
+				},
 			];
 		} else {
 			ordersKeyboardArray = [
@@ -39,12 +41,12 @@ const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) =
 				{
 					type: BUTTON_TYPES.CALLBACK,
 					key: `prev_${newCountPrev}_${newCountNext}`,
-					label: 'предыдущее',
+					label: 'Предыдущие',
 				},
 				{
 					type: BUTTON_TYPES.CALLBACK,
 					key: `next_${countNext}_${countNext + pageSize}`,
-					label: 'дальше',
+					label: 'Следующие',
 				},
 			];
 		}
@@ -55,7 +57,7 @@ const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) =
 			{
 				type: BUTTON_TYPES.CALLBACK,
 				key: `prev_${newCountPrev}_${newCountNext}`,
-				label: 'предыдущее',
+				label: 'Предыдущие',
 			},
 		];
 	}
@@ -71,7 +73,7 @@ const ordersKeyboard = (orders: Order[], countPrev: number, countNext: number) =
 
 export const myOrdersSceneConfig: ScenesConfig = {
 	sceneId: 'myOrders',
-	text: 'Все твои заказы',
+	text: 'Все твои заказы:',
 	image: 'https://cs6.pikabu.ru/post_img/big/2015/06/08/3/1433735650_472905306.jpg',
 	keyboard: [],
 };

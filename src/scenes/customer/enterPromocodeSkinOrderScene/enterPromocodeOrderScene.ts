@@ -31,12 +31,11 @@ const createOrder = async (ctx: MyContext): Promise<Order> => {
 		throw new Error('DescriptionProduct name is undefined');
 	}
 
-	console.log(54353243, orderData.chosenArtistName);
-
 	const artist = await artistService.getArtistByName(orderData.chosenArtistName);
 
 	const createdOrder = await orderService.createOrder({
 		description: orderData.descriptionProduct,
+		descriptionFileUrl: orderData.descriptionProductFile,
 		customerId: user.id,
 		customerTuid: BigInt(ctx.from.id),
 		nameProduct: orderData.product,
@@ -49,8 +48,6 @@ const createOrder = async (ctx: MyContext): Promise<Order> => {
 		orderId: createdOrder.id,
 		artistId: artist.userId,
 	};
-
-	// todo обнулять ctx.session.orderData
 };
 
 enterPromocodeSkinOrderScene.enter(async (ctx) => {
@@ -77,7 +74,7 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 
 		const usege = await promocodeService.getPromocodeUsage(user.id, promocode.id);
 
-		if (Object.keys(usege).length === 0) {
+		if (usege === null) {
 			if (promocode.usedCount < promocode.maxUses) {
 				if (promocode.discountType === DiscountType.fixed) {
 					ctx.session.orderData = {
@@ -91,7 +88,7 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 					};
 				}
 			} else {
-				await ctx.sendMessage('кончились активации');
+				await ctx.sendMessage('У промокода кончились активации');
 				await ctx.scene.reenter();
 				return;
 			}
@@ -99,7 +96,7 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 			await createOrder(ctx);
 			await ctx.scene.enter(paymentSkinOrderSceneId);
 		} else {
-			await ctx.sendMessage('вы уже спользовалит');
+			await ctx.sendMessage('Вы уже использовали этот промокод');
 			await ctx.scene.reenter();
 		}
 	} else {
@@ -109,7 +106,7 @@ enterPromocodeSkinOrderScene.on('text', async (ctx) => {
 			promocodeName: undefined,
 		};
 
-		await ctx.sendMessage('промо не существует');
+		await ctx.sendMessage('Промокод не найден');
 		await ctx.scene.reenter();
 	}
 });

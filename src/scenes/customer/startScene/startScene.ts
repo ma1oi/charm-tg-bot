@@ -1,7 +1,7 @@
 import { backButton } from '@constsants/buttons';
 import { MyContext } from '@myContext/myContext';
-import { messageSceneArtistId } from '@scenes/artist/messageScene';
 import { choiceProductSceneId } from '@scenes/customer/choiceProductScene';
+import { messageSceneId } from '@scenes/customer/messageScene';
 import { myOrdersSceneId } from '@scenes/customer/myOrdersScene';
 import { myOrdersSceneConfig } from '@scenes/customer/myOrdersScene/myOrdersSceneConfig';
 import { getMenuKeyboard } from '@utils/getMenuKeyboard';
@@ -22,7 +22,6 @@ startScene.enter(async (ctx) => {
 			reply_markup: getMenuKeyboard(startSceneConfig.keyboard).reply_markup,
 		});
 	} else {
-
 		if (startSceneConfig.image) {
 			await ctx.replyWithPhoto(startSceneConfig.image, {
 				caption: startSceneConfig.text,
@@ -48,7 +47,7 @@ startScene.on('callback_query', async (ctx) => {
 		} else if (parsed === myOrdersSceneConfig.sceneId) {
 			await ctx.scene.enter(myOrdersSceneId);
 		} else if (parsed.split('_')[0] === 'replyMessage') {
-			await ctx.scene.enter(messageSceneArtistId, { key: parsed });
+			await ctx.scene.enter(messageSceneId, { key: parsed });
 		}
 	}
 

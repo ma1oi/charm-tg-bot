@@ -2,6 +2,7 @@ import { bot } from '@bot';
 import { backButton } from '@constsants/buttons';
 import { getMyOrdersSceneArtistId } from '@scenes/artist/getMyOrdersScene';
 import { heroSceneArtistId } from '@scenes/artist/heroScene';
+import { startSceneId } from '@scenes/customer/startScene';
 import { messageService } from '@services/message';
 import { orderService } from '@services/order';
 import { userService } from '@services/user';
@@ -9,7 +10,6 @@ import { getMenuKeyboard } from '@utils/getMenuKeyboard';
 import { Scenes } from 'telegraf';
 
 import { messageSceneConfigArtist } from './messageSceneConfig-artist';
-import { startSceneId } from '@scenes/customer/startScene';
 
 export const messageSceneArtistId = messageSceneConfigArtist.sceneId;
 export const messageSceneArtist = new Scenes.BaseScene<Scenes.SceneContext>(messageSceneArtistId);
@@ -18,6 +18,8 @@ let customerId_: bigint;
 let orderId_: number;
 
 messageSceneArtist.enter(async (ctx) => {
+	console.log(111111);
+
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
@@ -50,20 +52,23 @@ messageSceneArtist.on('photo', async (ctx) => {
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
 
-	const createdMessage = await messageService.createMessage({
+	await messageService.createMessage({
 		orderId: orderId_,
 		content: ctx.text,
 		senderId: artist.id,
-		fileUrl: ctx.message.photo[0].file_id
+		fileUrl: ctx.message.photo[0].file_id,
 	});
 
 	if (ctx.text) {
-		await bot.telegram.sendPhoto(Number(customerId_), ctx.message.photo[0].file_id, { caption: ctx.text, reply_markup: getMenuKeyboard([
+		await bot.telegram.sendPhoto(Number(customerId_), ctx.message.photo[0].file_id, {
+			caption: ctx.text,
+			reply_markup: getMenuKeyboard([
 				{ type: 'callback', key: `replyMessage_${orderId_}`, label: 'Ответить на сообщение' },
 			]).reply_markup,
 		});
 	} else {
-		await bot.telegram.sendPhoto(Number(customerId_), ctx.message.photo[0].file_id, { reply_markup: getMenuKeyboard([
+		await bot.telegram.sendPhoto(Number(customerId_), ctx.message.photo[0].file_id, {
+			reply_markup: getMenuKeyboard([
 				{ type: 'callback', key: `replyMessage_${orderId_}`, label: 'Ответить на сообщение' },
 			]).reply_markup,
 		});
@@ -71,23 +76,21 @@ messageSceneArtist.on('photo', async (ctx) => {
 
 	await ctx.reply('Сообщение было отправлено');
 
-	await ctx.scene.enter(getMyOrdersSceneArtistId);})
-
+	await ctx.scene.enter(getMyOrdersSceneArtistId);
+});
 
 messageSceneArtist.on('text', async (ctx) => {
-	console.log(1111);
 	if (!ctx.from) {
 		throw new Error('ctx.from not implemented');
 	}
 
 	if (ctx.message.text === '/start') {
-		await ctx.scene.enter(startSceneId)
-		return
+		await ctx.scene.enter(startSceneId);
+		return;
 	} else if (ctx.message.text === '/artist') {
-		await ctx.scene.enter(heroSceneArtistId)
-		return
+		await ctx.scene.enter(heroSceneArtistId);
+		return;
 	}
-
 
 	const artist = await userService.getUserByTuid(BigInt(ctx.from.id));
 

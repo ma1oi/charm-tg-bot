@@ -3,6 +3,7 @@ import { Order, OrderStatus } from '@prisma/client';
 
 type OrderInput = {
 	description?: string;
+	descriptionFileUrl?: string;
 	customerId: number;
 	customerTuid: bigint;
 	nameProduct: string;
