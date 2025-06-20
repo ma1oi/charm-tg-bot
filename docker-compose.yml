@@ -43,6 +43,17 @@ services:
       - shared-network
     command: redis-server --requirepass pass
 
+  bot:
+    build: .
+    container_name: charm-bot
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - shared-network
+
 networks:
   shared-network:
     driver: bridge

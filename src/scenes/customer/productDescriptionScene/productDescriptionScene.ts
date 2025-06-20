@@ -37,7 +37,7 @@ productDescriptionScene.on('callback_query', async (ctx) => {
 			await ctx.deleteMessage();
 			await ctx.scene.enter(orderProductSceneId);
 		} else if (parsed === backButton.key) {
-			await ctx.scene.enter(choiceProductSceneId);
+			await ctx.scene.enter(choiceProductSceneId, { from: backButton.key });
 		} else if (parsed.split('_')[0] === 'replyMessage') {
 			await ctx.scene.enter(messageSceneId, { key: parsed, fromScene: ctx.scene.current?.id });
 		}

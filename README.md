@@ -1,15 +1,11 @@
 # charm-tg-bot
 
-To install dependencies:
-
 ```bash
-bun install
+bun docker-prod
 ```
 
-To run:
-
 ```bash
-bun run bot.ts
+bun migrate-prod
 ```
 
-This project was created using `bun init` in bun v1.2.5. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+

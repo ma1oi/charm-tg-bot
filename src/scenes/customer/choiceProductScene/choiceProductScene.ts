@@ -15,6 +15,7 @@ choiceProductScene.enter(async (ctx) => {
 	const { from } = ctx.scene.state as { from: string };
 
 	if (from === backButton.key) {
+		await ctx.deleteMessage();
 		await ctx.replyWithPhoto(config.image, {
 			caption: config.text,
 			reply_markup: getMenuKeyboard(config.keyboard).reply_markup,

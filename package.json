@@ -4,9 +4,17 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "start": "bun run src/bot.ts",
     "dev": "bun --watch run src/bot.ts",
+
     "docker": "docker compose up",
+    "docker-up": "docker compose up -d",
+    "docker-down": "docker compose -f docker-compose.yml down",
+    "docker-build": "docker compose build",
+    "docker-prod": "docker compose -f docker-compose.yml up -d --build",
+
     "migrate": "bunx prisma migrate dev",
+    "migrate-prod": "docker compose exec bot bunx prisma migrate deploy",
     "generate": "bunx prisma generate",
     "studio": "bunx prisma studio"
   },

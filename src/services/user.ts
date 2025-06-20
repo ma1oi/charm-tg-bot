@@ -1,7 +1,7 @@
 import { prisma } from '@config/database';
 import { User } from '@prisma/client';
 
-type UserInput = Omit<User, 'id' | 'role'>;
+type UserInput = Omit<User, 'id' | 'role' | 'createdAt'>;
 
 export const userService = {
 	async getUserById(id: User['id']) {
@@ -25,7 +25,7 @@ export const userService = {
 	},
 
 	async upsertUser(user: UserInput) {
-		const { name, username, tuid } = user
+		const { name, username, tuid } = user;
 
 		const upsertUser = await prisma.user.upsert({
 			where: { tuid },
@@ -35,4 +35,4 @@ export const userService = {
 
 		return { ...upsertUser };
 	},
-}
+};

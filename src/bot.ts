@@ -1,7 +1,7 @@
 import { appConfig } from '@config/app';
+import { errorHandler } from '@middlewares/errorHandler';
 import { redisStore } from '@middlewares/redis';
 import { upsertUserMiddleware } from '@middlewares/upsertUser';
-import { errorHandler } from '@middlewares/errorHandler';
 import { MyContextWizard } from '@myContext/myContext';
 import { allArtistsSceneAdmin } from '@scenes/admin/allArtistsScene';
 import { artistAdminScene } from '@scenes/admin/artistScene';
@@ -19,19 +19,18 @@ import { messageSceneArtist } from '@scenes/artist/messageScene';
 import { orderSceneArtist } from '@scenes/artist/orderScene';
 import { submitSkinSceneArtist } from '@scenes/artist/submitSkinScene';
 import { choiceProductScene } from '@scenes/customer/choiceProductScene/choiceProductScene';
+import { closeOrderScene } from '@scenes/customer/closeOrderScene';
 import { enterPromocodeSkinOrderScene } from '@scenes/customer/enterPromocodeSkinOrderScene/enterPromocodeOrderScene';
 import { messageScene, messageSceneId } from '@scenes/customer/messageScene/messageScene';
 import { myOrdersScene } from '@scenes/customer/myOrdersScene/';
 import { paymentSkinOrderScene } from '@scenes/customer/paymentSkinOrderScene/';
 import { productDescriptionScene } from '@scenes/customer/productDescriptionScene/productDescriptionScene';
-import { orderService } from '@services/order';
 import { artistsAdminScene } from 'src/scenes/admin/artistsScene';
 import { descriptionSkinOrderScene } from 'src/scenes/customer/descriptionSkinOrderScene';
 import { orderProductScene } from 'src/scenes/customer/orderProductScene';
 import { orderScene } from 'src/scenes/customer/orderScene';
 import { startScene, startSceneId } from 'src/scenes/customer/startScene';
 import { Scenes, session, Telegraf } from 'telegraf';
-import { closeOrderScene, closeOrderSceneId } from '@scenes/customer/closeOrderScene';
 
 export const bot = new Telegraf<MyContextWizard>(appConfig.botToken);
 
@@ -69,8 +68,6 @@ const stage = new Scenes.Stage<MyContextWizard>([
 ]);
 
 // @ts-ignore
-// bot.use(session<MySessionWizard>({ defaultSession: () => ({}) }));
-
 bot.use(session<MySessionWizard>({ store: redisStore, defaultSession: () => ({}) }));
 
 bot.use(errorHandler);
@@ -106,10 +103,6 @@ bot.on('callback_query', async (ctx) => {
 			fromScene: ctx.scene.current?.id,
 		});
 	}
-	// else if (key.split('_')[0] === 'closeOrder') {
-	// 	await ctx.scene.enter(closeOrderSceneId, { key: key });
-	// 	await ctx.answerCbQuery();
-	// }
 });
 
 void (async () => {
